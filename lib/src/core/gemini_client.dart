@@ -217,7 +217,16 @@ class GeminiClient {
   /// Generate an image from a text prompt
   ///
   /// This method uses Gemini's image generation capabilities to create images
-  /// from text descriptions. The response will contain the generated image data.
+  /// from text descriptions. The response will contain both a text description
+  /// and the generated image data.
+  ///
+  /// Example:
+  /// ```dart
+  /// final response = await client.generateImage('A sunset over mountains');
+  /// print(response.text); // Text description
+  /// final imageData = response.candidates.first.content.parts
+  ///     .whereType<ImagePart>().first.data; // Image bytes
+  /// ```
   Future<GeminiResponse> generateImage(
     String prompt, {
     GenerationConfig? config,
@@ -226,7 +235,7 @@ class GeminiClient {
     _ensureInitialized();
 
     try {
-      // Use v1beta API version for image generation
+      // Use v1beta API version and correct model for image generation
       final imageGenService = HttpService(
         auth: _auth!,
         config: _config.copyWith(apiVersion: 'v1beta'),

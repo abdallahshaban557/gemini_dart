@@ -23,7 +23,10 @@ void main() async {
         'contents': [
           {
             'parts': [
-              {'text': 'generate a picture of the swiss alps'}
+              {
+                'text':
+                    'generate a picture of the swiss alps with Godzilla in the middle'
+              }
             ]
           }
         ]

@@ -33,7 +33,7 @@ void main() async {
     );
 
     print('✅ Response received!');
-    
+
     if (response['candidates'] != null) {
       final candidates = response['candidates'] as List;
       final candidate = candidates[0];
@@ -55,3 +55,43 @@ void main() async {
           mimeType = inlineData['mimeType'] as String;
         }
       }
+      if (textDescription != null) {
+        print('📝 Description: $textDescription\n');
+      }
+
+      if (imageData != null && mimeType != null) {
+        await _saveImage(imageData, mimeType, 'sunset_mountains.png');
+        print('🎉 Image generation successful!');
+      }
+    }
+  } catch (e) {
+    print('❌ Error: $e');
+  }
+
+  httpService.dispose();
+}
+
+Future<void> _saveImage(
+    String base64Data, String mimeType, String filename) async {
+  try {
+    final bytes = base64Decode(base64Data);
+
+    final dir = Directory('example/generated_images');
+    if (!await dir.exists()) await dir.create(recursive: true);
+
+    final file = File('example/generated_images/$filename');
+    await file.writeAsBytes(bytes);
+
+    print('💾 Image saved: ${file.path}');
+    print('📏 Size: ${_formatSize(bytes.length)}');
+    print('🖼️  MIME type: $mimeType');
+  } catch (e) {
+    print('❌ Failed to save image: $e');
+  }
+}
+
+String _formatSize(int bytes) {
+  if (bytes < 1024) return '$bytes B';
+  if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+  return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+}
