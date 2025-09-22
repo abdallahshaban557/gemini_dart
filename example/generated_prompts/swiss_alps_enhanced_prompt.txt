@@ -1,0 +1,39 @@
+Swiss Alps Image Generation Prompt
+==================================
+
+Original Request: "generate a picture of the swiss alps"
+
+Enhanced Prompt:
+## Prompt: Majestic Swiss Alps at Golden Hour
+
+**Style:** Cinematic landscape photography, reminiscent of Ansel Adams, with a touch of painterly realism.
+
+**Subject:** A breathtaking panorama of the Swiss Alps at golden hour.  The scene should feature prominent, snow-capped peaks, showcasing their majestic scale and texture.  Include a variety of peaks, with some shrouded in subtle, wispy clouds at their summits, suggesting a high-altitude alpine atmosphere.  The sky should be a vibrant gradient of warm oranges, yellows, and deep reds transitioning to a soft, cooler blue near the horizon.
+
+**Foreground:** A tranquil alpine lake reflects the golden light and the surrounding mountains, adding a sense of depth and serenity.  The lake's shore features a lush, verdant alpine meadow with wildflowers in bloom.  A small, picturesque Swiss village is visible in the mid-ground, nestled amongst the lower slopes, hinting at human life within this majestic landscape.  The village should have traditional chalet-style architecture.
+
+**Lighting:** Golden hour lighting – the sun should be low on the horizon, casting long shadows across the meadow and illuminating the peaks with a warm, golden glow.  The light should be diffused, not harsh, creating a soft, ethereal quality.
+
+**Weather:** Clear skies with a few wispy cirrus clouds near the mountain peaks.  The air should appear crisp and clean.
+
+**Technical Specifications:**
+
+* **Resolution:** 4K (3840 x 2160 pixels)
+* **Aspect Ratio:** 16:9
+* **Camera Settings:**  Simulate a shallow depth of field (f/2.8-f/4),  long exposure (around 1/8th to 1/30th of a second) to capture the smoothness of the lake, and a low ISO (ISO 100) for optimal image quality.  Use a wide-angle lens to capture the vastness of the landscape.
+
+**Keywords:**  Swiss Alps, Golden Hour, Sunrise, Sunset, Alpine Lake, Alpine Meadow, Chalet Village, Snow-capped Peaks, Cinematic Landscape, Ansel Adams, Painterly Realism, High Resolution, 4K, Wide Angle, Shallow Depth of Field, Long Exposure, Low ISO, Dramatic Lighting, Wispy Clouds, Crisp Air, Majestic Mountains, Tranquil, Serene.
+
+
+This prompt aims to provide enough detail for the AI to generate a highly specific and visually stunning image. Remember to experiment with different keywords and phrasing to achieve your desired results.  You may also need to iterate and refine the prompt based on the AI's initial outputs.
+
+
+Usage Instructions:
+1. Copy the enhanced prompt above
+2. Use it with AI image generators:
+   • DALL-E 3: https://openai.com/dall-e-3
+   • Midjourney: https://midjourney.com
+   • Stable Diffusion: https://stability.ai
+   • Adobe Firefly: https://firefly.adobe.com
+
+Generated on: 2025-09-22T00:04:04.788710

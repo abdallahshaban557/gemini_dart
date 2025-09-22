@@ -1,0 +1,18 @@
+Image Concept: A cyberpunk cityscape at night with neon lights and flying cars
+Generated Prompt:
+Masterpiece, cinematic, cyberpunk cityscape at night, rendered in the style of Syd Mead and Blade Runner 2049, featuring meticulous detail and a photorealistic aesthetic with a slight painterly touch.  The scene showcases a dense, towering cityscape with intricate architectural designs incorporating neon signs, holographic advertisements, and flying vehicles weaving through skyscrapers.  The lighting is predominantly neon-infused, with vibrant pinks, electric blues, deep purples, and emerald greens emanating from holographic billboards, streetlights, and vehicle headlights, creating a high-contrast, atmospheric haze.  The overall atmosphere is dark, gritty, yet captivatingly alluring, hinting at both technological advancement and underlying societal decay.
+
+The composition features a dramatic diagonal line created by a towering skyscraper stretching from the lower-left to the upper-right, drawing the viewer's eye towards a central focal point: a massive holographic advertisement depicting a futuristic, androgynous figure.  Flying cars, sleek and futuristic in design, are depicted at various altitudes, adding depth and movement to the scene.  The color palette leans heavily towards deep blues and blacks for the overall cityscape, contrasted sharply by the vivid neon accents and the warm glow of interior building lights visible through windows.
+
+The camera angle is a dynamic, low-angle shot, looking upwards towards the towering skyscrapers, emphasizing the scale and imposing nature of the cityscape. The perspective is slightly tilted, enhancing the sense of dynamism and unease. The image should be rendered at 8k resolution, with a high level of detail visible in every element, including the texture of the buildings, the reflections on the flying cars, and the subtle variations in light and shadow.  Keywords:  cyberpunk, cityscape, neon, flying cars, holographic, skyscrapers, night, Syd Mead, Blade Runner 2049,  photorealistic, painterly,  8k, high resolution, detailed, cinematic, dynamic, atmospheric, high contrast, gritty, alluring, low angle, diagonal composition.
+
+
+Usage Instructions:
+1. Copy the prompt above
+2. Use it with your preferred AI image generator:
+   - DALL-E: https://openai.com/dall-e-2/
+   - Midjourney: https://midjourney.com/
+   - Stable Diffusion: https://stability.ai/
+   - Adobe Firefly: https://firefly.adobe.com/
+
+Generated on: 2025-09-22T00:01:01.249605

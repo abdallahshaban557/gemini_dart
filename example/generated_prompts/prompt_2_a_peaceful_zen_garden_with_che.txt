@@ -1,0 +1,14 @@
+Image Concept: A peaceful zen garden with cherry blossoms and a small pond
+Generated Prompt:
+Create a highly detailed digital painting in the style of a Japanese woodblock print, employing soft, painterly brushstrokes with visible texture, reminiscent of Utagawa Hiroshige.  The scene depicts a serene Zen garden, bathed in the soft, diffused light of a slightly overcast spring day.  The atmosphere should be peaceful and contemplative, with a sense of quiet tranquility.  The color palette should be predominantly soft pastels, featuring delicate pinks and whites of cherry blossoms in full bloom, contrasting with the deep greens of moss-covered rocks and the reflective, still surface of a small, koi-pond.  Subtle touches of muted blues and purples should accentuate the sky and the water's reflection. The composition should follow the rule of thirds, with a carefully arranged grouping of meticulously raked gravel creating a pathway leading the eye towards a small, picturesque bridge spanning the pond.  Several cherry blossom branches should gracefully arch over the scene.  A few meticulously placed rocks, covered in moss, should be strategically positioned in and around the pond.  The camera angle should be a low, slightly elevated perspective, as if viewing the garden from a kneeling position, emphasizing the intimate scale and detail.  The pond should reflect the blossoms and sky with a gentle, rippling effect. The image should be rendered at a high resolution (8k or equivalent), with exceptional detail and clarity, showcasing the fine textures of the gravel, moss, and petals. Keywords:  Zen garden, cherry blossoms, koi pond, Japanese woodblock print, Hiroshige, pastel colors, soft light, tranquil atmosphere, peaceful, contemplative, high resolution, 8k, detailed, moss, gravel, bridge, spring, delicate, serene, reflective water, painterly brushstrokes, rule of thirds, low angle shot.
+
+
+Usage Instructions:
+1. Copy the prompt above
+2. Use it with your preferred AI image generator:
+   - DALL-E: https://openai.com/dall-e-2/
+   - Midjourney: https://midjourney.com/
+   - Stable Diffusion: https://stability.ai/
+   - Adobe Firefly: https://firefly.adobe.com/
+
+Generated on: 2025-09-22T00:00:58.207351
