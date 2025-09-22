@@ -25,7 +25,7 @@ void main() async {
 
   // Create text handler with correct model name
   final textHandler =
-      TextHandler(httpService: httpService, model: 'gemini-1.5-flash');
+      TextHandler(httpService: httpService, model: 'gemini-2.5-flash');
 
   try {
     print('=== Basic Text Generation ===');
@@ -40,9 +40,10 @@ void main() async {
     print('\n=== Text Generation with Configuration ===');
 
     // Text generation with custom configuration
+    // Note: gemini-2.5-flash uses tokens for "thinking", so we need higher limits
     const generationConfig = GenerationConfig(
       temperature: 0.7,
-      maxOutputTokens: 100,
+      maxOutputTokens: 2000, // High limit needed for gemini-2.5-flash
     );
 
     final response2 = await textHandler.generateContent(
