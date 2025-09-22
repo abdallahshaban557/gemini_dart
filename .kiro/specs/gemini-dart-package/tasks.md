@@ -8,7 +8,7 @@
   - Create basic README.md and CHANGELOG.md files
   - _Requirements: 9.1, 9.5_
 
-- [ ] 2. Implement core data models and serialization
+- [x] 2. Implement core data models and serialization
 
   - Create Content abstract class and concrete implementations (TextContent, ImageContent, VideoContent)
   - Implement GeminiResponse, Candidate, and related response models with JSON serialization
