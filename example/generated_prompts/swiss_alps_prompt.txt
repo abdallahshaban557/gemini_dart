@@ -1,0 +1,32 @@
+Swiss Alps Image Prompt
+======================
+
+## Image Generation Prompt: Majestic Swiss Alps at Sunrise
+
+**Subject:** A breathtaking panoramic view of the Swiss Alps at sunrise, showcasing the Eiger, Mönch, and Jungfrau mountains prominently.
+
+**Lighting:**  The scene is bathed in the warm, golden light of the rising sun, illuminating the snow-capped peaks with a dramatic, almost ethereal glow.  Long shadows stretch across the valleys and lower slopes, creating a strong sense of depth and perspective.  The sky should feature a vibrant gradient of oranges, yellows, pinks, and purples, with some subtle cloud formations adding texture and interest without obscuring the mountains.  A slight haze or atmospheric perspective should be visible in the distance, enhancing the scale of the mountains.
+
+**Composition:**  The image should employ a classic landscape composition.  The foreground should include a lush green alpine meadow with wildflowers scattered sparsely, leading the viewer's eye towards the majestic central mountains.  The Eiger, Mönch, and Jungfrau should form a visually powerful central grouping, with the Eiger slightly offset to the left, and the Jungfrau rising majestically to the right.  The Mönch should sit centrally between them. The peaks should be crisp and detailed, showcasing their rugged textures and snow-covered faces.  The composition should strive for a balanced but dynamic feel, with leading lines and varying heights contributing to a compelling visual narrative.
+
+**Style:**  The style should be photorealistic, aiming for maximum detail and realism in the textures of the mountains, the vegetation, and the sky. The overall mood should be one of awe-inspiring beauty and serenity, conveying the grandeur and majesty of the Swiss Alps.
+
+**Technical Details:**  High resolution (at least 4K), wide aspect ratio (e.g., 16:9 or 21:9) recommended for panoramic effect.  Focus should be sharp across the entire image, with appropriate depth of field to maintain clarity throughout the scene.
+
+
+**Optional additions (choose one or more):**
+
+* A small, picturesque alpine village nestled in the valley below.
+* A lone hiker silhouetted against the rising sun on a distant trail.
+* A clear, reflective lake reflecting the sunrise and the mountains.
+
+**Keywords:** Swiss Alps, Eiger, Mönch, Jungfrau, sunrise, golden hour, alpine meadow, wildflowers, snow-capped peaks, photorealistic, panoramic, landscape photography, mountain range, Switzerland, majestic, serene, breathtaking.
+
+
+Use this prompt with:
+• DALL-E 3
+• Midjourney  
+• Stable Diffusion
+• Adobe Firefly
+
+Generated: 2025-09-22 00:10:32.154401

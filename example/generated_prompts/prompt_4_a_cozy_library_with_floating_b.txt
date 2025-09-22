@@ -1,0 +1,14 @@
+Image Concept: A cozy library with floating books and magical lighting
+Generated Prompt:
+Create a hyperrealistic digital painting in the style of Alphonse Mucha and Greg Rutkowski, blending Art Nouveau elegance with fantasy elements.  The image depicts a cozy, circular library filled with floating books of various sizes and colors, illuminated by ethereal, swirling magical light sources that emit a soft, warm glow.  The lighting should be predominantly warm, with accents of cool blues and purples emanating from the magical light sources, creating a dreamlike, enchanting atmosphere.  The color palette should be rich and saturated, featuring deep jewel tones like emerald green, sapphire blue, ruby red, and gold, contrasted by soft creams and ivories in the book pages and architectural details.  The books should float gracefully, some open to reveal intricate illustrations, others closed, appearing almost weightless in the magical ambience.  The library itself should feature ornate, Art Nouveau-style architectural details, including curved lines, flowing patterns, and stained-glass-like windows that subtly reflect the magical light. The camera angle should be slightly low, looking up towards the floating books and the domed ceiling, creating a sense of grandeur and wonder.  The perspective should be slightly fisheye-distorted to enhance the fantastical feel, subtly exaggerating the curvature of the library. The composition should be balanced, with the floating books arranged in a dynamic yet harmonious way, drawing the eye towards the center of the library.  The overall resolution should be 8k, achieving photorealistic detail and sharp focus, with a cinematic depth of field subtly blurring the background architectural elements.  Keywords:  Art Nouveau, Greg Rutkowski, Alphonse Mucha, hyperrealistic, digital painting, fantasy library, floating books, magical light, warm lighting, cool accents, jewel tones,  circular room, domed ceiling, ornate architecture, stained glass,  fisheye, cinematic depth of field, 8k resolution,  dreamlike, enchanting, cozy, weightless books, intricate illustrations, photorealistic, high detail, saturated colors.
+
+
+Usage Instructions:
+1. Copy the prompt above
+2. Use it with your preferred AI image generator:
+   - DALL-E: https://openai.com/dall-e-2/
+   - Midjourney: https://midjourney.com/
+   - Stable Diffusion: https://stability.ai/
+   - Adobe Firefly: https://firefly.adobe.com/
+
+Generated on: 2025-09-22T00:01:04.325175
