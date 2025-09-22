@@ -10,6 +10,19 @@ abstract class Content {
 
   /// Create Content from JSON representation
   static Content fromJson(Map<String, dynamic> json) {
+    // Handle API response format with 'parts'
+    if (json.containsKey('parts')) {
+      final parts = json['parts'] as List<dynamic>?;
+      if (parts != null && parts.isNotEmpty) {
+        final firstPart = parts.first as Map<String, dynamic>;
+        if (firstPart.containsKey('text')) {
+          return TextContent(firstPart['text'] as String);
+        }
+        // Handle other part types as needed
+      }
+    }
+
+    // Handle our internal format with 'type'
     final type = json['type'] as String?;
     switch (type) {
       case 'text':
