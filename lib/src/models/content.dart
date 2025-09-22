@@ -22,6 +22,12 @@ abstract class Content {
       }
     }
 
+    // Handle empty content (e.g., when response is truncated due to token limits)
+    if (!json.containsKey('parts') && !json.containsKey('type')) {
+      // Return empty text content for truncated responses
+      return TextContent('');
+    }
+
     // Handle our internal format with 'type'
     final type = json['type'] as String?;
     switch (type) {
@@ -43,11 +49,8 @@ class TextContent extends Content {
   final String text;
 
   /// Creates a new TextContent with the given text
-  TextContent(this.text) {
-    if (text.isEmpty) {
-      throw ArgumentError('Text content cannot be empty');
-    }
-  }
+  /// Empty text is allowed for truncated responses
+  TextContent(this.text);
 
   @override
   String get type => 'text';
