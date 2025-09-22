@@ -6,3 +6,15 @@ library gemini_dart;
 
 // Export core models
 export 'src/models/models.dart';
+
+// Export core authentication and configuration
+export 'src/core/auth.dart';
+export 'src/core/configuration_manager.dart';
+export 'src/core/config_validator.dart';
+export 'src/core/secure_storage.dart';
+
+// Export handlers
+export 'src/handlers/handlers.dart';
+
+// Export services
+export 'src/services/http_service.dart';
