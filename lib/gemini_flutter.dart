@@ -2,6 +2,6 @@
 ///
 /// Contains Flutter widgets and utilities for integrating Gemini AI
 /// into Flutter applications.
-library flutter_gemini;
+library gemini_flutter;
 
 // Flutter-specific exports will be added as implementation progresses
