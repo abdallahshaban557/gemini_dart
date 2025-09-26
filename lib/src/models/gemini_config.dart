@@ -1,3 +1,20 @@
+/// Supported API versions for the Gemini API
+enum ApiVersion {
+  /// Version 1 (stable)
+  v1('v1'),
+
+  /// Version 1 beta (preview features)
+  v1beta('v1beta');
+
+  const ApiVersion(this.value);
+
+  /// The string value of the API version
+  final String value;
+
+  @override
+  String toString() => value;
+}
+
 /// Configuration for the Gemini client
 class GeminiConfig {
   /// Base URL for the Gemini API
@@ -16,7 +33,7 @@ class GeminiConfig {
   final CacheConfig? cacheConfig;
 
   /// API version to use
-  final String apiVersion;
+  final ApiVersion apiVersion;
 
   /// Creates a new GeminiConfig
   const GeminiConfig({
@@ -25,7 +42,7 @@ class GeminiConfig {
     this.maxRetries = 3,
     this.enableLogging = false,
     this.cacheConfig,
-    this.apiVersion = 'v1',
+    this.apiVersion = ApiVersion.v1,
   });
 
   /// Create GeminiConfig from JSON
@@ -39,7 +56,10 @@ class GeminiConfig {
       cacheConfig: json['cacheConfig'] != null
           ? CacheConfig.fromJson(json['cacheConfig'] as Map<String, dynamic>)
           : null,
-      apiVersion: json['apiVersion'] as String? ?? 'v1',
+      apiVersion: ApiVersion.values.firstWhere(
+        (version) => version.value == (json['apiVersion'] as String? ?? 'v1'),
+        orElse: () => ApiVersion.v1,
+      ),
     );
   }
 
@@ -51,7 +71,7 @@ class GeminiConfig {
       'maxRetries': maxRetries,
       'enableLogging': enableLogging,
       if (cacheConfig != null) 'cacheConfig': cacheConfig!.toJson(),
-      'apiVersion': apiVersion,
+      'apiVersion': apiVersion.value,
     };
   }
 
@@ -62,7 +82,7 @@ class GeminiConfig {
     int? maxRetries,
     bool? enableLogging,
     CacheConfig? cacheConfig,
-    String? apiVersion,
+    ApiVersion? apiVersion,
   }) {
     return GeminiConfig(
       baseUrl: baseUrl ?? this.baseUrl,
@@ -93,9 +113,7 @@ class GeminiConfig {
       throw ArgumentError('Max retries cannot be negative');
     }
 
-    if (apiVersion.isEmpty) {
-      throw ArgumentError('API version cannot be empty');
-    }
+    // API version validation is now handled by the enum type
 
     cacheConfig?.validate();
   }
@@ -129,7 +147,7 @@ class GeminiConfig {
       'maxRetries: $maxRetries, '
       'enableLogging: $enableLogging, '
       'cacheConfig: $cacheConfig, '
-      'apiVersion: $apiVersion)';
+      'apiVersion: ${apiVersion.value})';
 }
 
 /// Configuration for response caching

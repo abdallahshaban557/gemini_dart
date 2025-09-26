@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as http_parser;
-import 'package:meta/meta.dart';
 
 import '../core/auth.dart';
 import '../core/exceptions.dart';
@@ -236,8 +235,8 @@ class HttpService {
   /// Builds the complete URI for a request
   Uri _buildUri(String endpoint, [Map<String, String>? queryParameters]) {
     final baseUri = Uri.parse(_config.baseUrl);
-    final path =
-        '${baseUri.path}/${_config.apiVersion}/$endpoint'.replaceAll('//', '/');
+    final path = '${baseUri.path}/${_config.apiVersion.value}/$endpoint'
+        .replaceAll('//', '/');
 
     return baseUri.replace(
       path: path,

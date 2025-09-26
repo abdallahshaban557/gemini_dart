@@ -43,12 +43,8 @@ class ConfigValidator {
       errors['maxRetries'] = 'Max retries should not exceed 10';
     }
 
-    // Validate API version
-    if (config.apiVersion.isEmpty) {
-      errors['apiVersion'] = 'API version cannot be empty';
-    } else if (!RegExp(r'^v\d+(\.\d+)*$').hasMatch(config.apiVersion)) {
-      errors['apiVersion'] = 'API version must follow format v1, v1.1, etc.';
-    }
+    // API version validation is now handled by the enum type
+    // No additional validation needed as enum ensures only valid values
 
     // Validate cache config if present
     if (config.cacheConfig != null) {

@@ -20,6 +20,13 @@ import 'retry_config.dart';
 /// content generation using the Gemini API. It integrates all handlers and
 /// services to provide a simple, high-level API for developers.
 class GeminiClient {
+  /// Creates a new GeminiClient with optional configuration
+  GeminiClient({
+    GeminiConfig? config,
+    RetryConfig? retryConfig,
+  }) : _config = config ?? const GeminiConfig() {
+    _initializeServices(retryConfig);
+  }
   HttpService? _httpService;
   AuthenticationHandler? _auth;
   TextHandler? _textHandler;
@@ -28,14 +35,6 @@ class GeminiClient {
 
   GeminiConfig _config;
   bool _initialized = false;
-
-  /// Creates a new GeminiClient with optional configuration
-  GeminiClient({
-    GeminiConfig? config,
-    RetryConfig? retryConfig,
-  }) : _config = config ?? const GeminiConfig() {
-    _initializeServices(retryConfig);
-  }
 
   /// Initialize all internal services
   void _initializeServices(RetryConfig? retryConfig) {
@@ -238,7 +237,7 @@ class GeminiClient {
       // Use v1beta API version and correct model for image generation
       final imageGenService = HttpService(
         auth: _auth!,
-        config: _config.copyWith(apiVersion: 'v1beta'),
+        config: _config.copyWith(apiVersion: ApiVersion.v1beta),
       );
 
       final response = await imageGenService.post(
@@ -306,7 +305,7 @@ class GeminiClient {
       // Use v1beta API version for image generation
       final imageGenService = HttpService(
         auth: _auth!,
-        config: _config.copyWith(apiVersion: 'v1beta'),
+        config: _config.copyWith(apiVersion: ApiVersion.v1beta),
       );
 
       final response = await imageGenService.post(

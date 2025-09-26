@@ -19,7 +19,7 @@ void main() async {
     // Use the working approach directly
     final httpService = HttpService(
       auth: AuthenticationHandler()..setApiKey(apiKey),
-      config: const GeminiConfig(apiVersion: 'v1beta'),
+      config: const GeminiConfig(apiVersion: ApiVersion.v1beta),
     );
 
     final response = await httpService.post(

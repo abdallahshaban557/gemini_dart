@@ -71,27 +71,10 @@ void main() {
         );
       });
 
-      test('should throw exception for empty API version', () {
-        const config = GeminiConfig(apiVersion: '');
-        expect(
-          () => ConfigValidator.validateConfig(config),
-          throwsA(isA<ConfigValidationException>()),
-        );
-      });
-
-      test('should throw exception for invalid API version format', () {
-        const config = GeminiConfig(apiVersion: 'version1');
-        expect(
-          () => ConfigValidator.validateConfig(config),
-          throwsA(isA<ConfigValidationException>()),
-        );
-      });
-
-      test('should accept valid API version formats', () {
+      test('should accept valid API version enum values', () {
         const configs = [
-          GeminiConfig(apiVersion: 'v1'),
-          GeminiConfig(apiVersion: 'v2.1'),
-          GeminiConfig(apiVersion: 'v1.0.0'),
+          GeminiConfig(apiVersion: ApiVersion.v1),
+          GeminiConfig(apiVersion: ApiVersion.v1beta),
         ];
 
         for (final config in configs) {
@@ -167,7 +150,7 @@ void main() {
         expect(config.timeout, equals(const Duration(seconds: 30)));
         expect(config.maxRetries, equals(3));
         expect(config.enableLogging, isFalse);
-        expect(config.apiVersion, equals('v1'));
+        expect(config.apiVersion, equals(ApiVersion.v1));
       });
     });
 

@@ -30,7 +30,7 @@ void main() {
 
     config = const GeminiConfig(
       baseUrl: 'https://api.example.com',
-      apiVersion: 'v1',
+      apiVersion: ApiVersion.v1,
       timeout: Duration(seconds: 10),
     );
 
