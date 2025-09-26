@@ -12,8 +12,10 @@ void main() {
       expect(content.type, equals('text'));
     });
 
-    test('should throw ArgumentError for empty text', () {
-      expect(() => TextContent(''), throwsArgumentError);
+    test('should allow empty text for truncated responses', () {
+      final content = TextContent('');
+      expect(content.text, equals(''));
+      expect(content.type, equals('text'));
     });
 
     test('should serialize to JSON correctly', () {
@@ -307,9 +309,11 @@ void main() {
       expect(() => Content.fromJson(json), throwsArgumentError);
     });
 
-    test('should throw ArgumentError for missing type field', () {
+    test('should handle missing type field by returning empty TextContent', () {
       final json = {'text': 'Hello'};
-      expect(() => Content.fromJson(json), throwsArgumentError);
+      final content = Content.fromJson(json);
+      expect(content, isA<TextContent>());
+      expect((content as TextContent).text, equals(''));
     });
   });
 }

@@ -43,7 +43,7 @@ void main() {
         };
 
         when(mockHttpService.post(
-          'models/gemini-pro:generateContent',
+          'models/gemini-1.5-flash:generateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
@@ -54,7 +54,7 @@ void main() {
         expect(result.text, equals('Hello! How can I help you today?'));
         expect(result.candidates, hasLength(1));
         verify(mockHttpService.post(
-          'models/gemini-pro:generateContent',
+          'models/gemini-1.5-flash:generateContent',
           body: argThat(
             isA<Map<String, dynamic>>()
                 .having((m) => m['contents'], 'contents', isA<List>()),
@@ -102,7 +102,7 @@ void main() {
 
         // Assert
         verify(mockHttpService.post(
-          'models/gemini-pro:generateContent',
+          'models/gemini-1.5-flash:generateContent',
           body: argThat(
             isA<Map<String, dynamic>>().having(
               (m) => m['generationConfig'],
@@ -188,7 +188,7 @@ void main() {
         // Assert
         expect(result.text, equals('Generated response'));
         verify(mockHttpService.post(
-          'models/gemini-pro:generateContent',
+          'models/gemini-1.5-flash:generateContent',
           body: anyNamed('body'),
         )).called(1);
       });
@@ -247,7 +247,7 @@ void main() {
         ];
 
         when(mockHttpService.postStream(
-          'models/gemini-pro:streamGenerateContent',
+          'models/gemini-1.5-flash:streamGenerateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) => Stream.fromIterable(streamData));
 

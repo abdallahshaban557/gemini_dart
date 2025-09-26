@@ -15,30 +15,25 @@ import '../../../lib/src/services/http_service.dart';
 
 import 'http_service_test.mocks.dart';
 
-@GenerateMocks([http.Client, AuthenticationHandler])
+@GenerateMocks([http.Client])
 void main() {
   late MockClient mockClient;
-  late MockAuthenticationHandler mockAuth;
+  late AuthenticationHandler auth;
   late GeminiConfig config;
   late HttpService httpService;
 
   setUp(() {
     mockClient = MockClient();
-    mockAuth = MockAuthenticationHandler();
+    auth = AuthenticationHandler();
+    auth.setApiKey('test-api-key');
     config = const GeminiConfig(
       baseUrl: 'https://api.example.com',
       apiVersion: ApiVersion.v1,
       timeout: Duration(seconds: 10),
     );
 
-    // Setup default auth behavior
-    when(mockAuth.getAuthHeaders()).thenReturn({
-      'x-goog-api-key': 'test-api-key',
-      'Content-Type': 'application/json',
-    });
-
     httpService = HttpService(
-      auth: mockAuth,
+      auth: auth,
       config: config,
       retryConfig: const RetryConfig.noRetry(),
       client: mockClient,
@@ -53,7 +48,7 @@ void main() {
     group('constructor', () {
       test('should create with default retry config when not provided', () {
         final service = HttpService(
-          auth: mockAuth,
+          auth: auth,
           config: config,
           client: mockClient,
         );
@@ -65,7 +60,7 @@ void main() {
         final invalidConfig = const GeminiConfig(baseUrl: '');
         expect(
           () => HttpService(
-            auth: mockAuth,
+            auth: auth,
             config: invalidConfig,
             client: mockClient,
           ),
@@ -231,11 +226,17 @@ void main() {
 
     group('error handling', () {
       test('should throw GeminiAuthException when auth fails', () async {
-        when(mockAuth.getAuthHeaders())
-            .thenThrow(const GeminiAuthException('API key not set'));
+        // Create a service with no API key set
+        final authWithoutKey = AuthenticationHandler();
+        final serviceWithoutAuth = HttpService(
+          auth: authWithoutKey,
+          config: config,
+          retryConfig: const RetryConfig.noRetry(),
+          client: mockClient,
+        );
 
         expect(
-          () => httpService.get('test'),
+          () => serviceWithoutAuth.get('test'),
           throwsA(isA<GeminiAuthException>()),
         );
       });
@@ -327,7 +328,7 @@ void main() {
 
       setUp(() {
         retryService = HttpService(
-          auth: mockAuth,
+          auth: auth,
           config: config,
           retryConfig: const RetryConfig(
             maxAttempts: 3,
@@ -371,14 +372,22 @@ void main() {
       });
 
       test('should exhaust retries and throw last exception', () async {
-        when(mockClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-            (_) async => throw const SocketException('Connection failed'));
+        // Track call count manually
+        int callCount = 0;
+        when(mockClient.get(any, headers: anyNamed('headers')))
+            .thenAnswer((_) async {
+          callCount++;
+          throw const SocketException('Connection failed');
+        });
 
-        expect(
-          () => retryService.get('test'),
-          throwsA(isA<GeminiNetworkException>()),
-        );
-        verify(mockClient.get(any, headers: anyNamed('headers'))).called(3);
+        try {
+          await retryService.get('test');
+          fail('Expected exception to be thrown');
+        } catch (e) {
+          expect(e, isA<GeminiNetworkException>());
+          expect(callCount, equals(3),
+              reason: 'Should make 3 attempts (1 initial + 2 retries)');
+        }
       });
 
       test('should handle rate limit delays', () async {
@@ -496,7 +505,7 @@ void main() {
       test('should log requests when logging is enabled', () async {
         final loggingConfig = config.copyWith(enableLogging: true);
         final loggingService = HttpService(
-          auth: mockAuth,
+          auth: auth,
           config: loggingConfig,
           retryConfig: const RetryConfig.noRetry(),
           client: mockClient,
