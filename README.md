@@ -49,7 +49,7 @@ void main() async {
   await client.initialize('YOUR_API_KEY');
 
   // Generate text
-  final response = await client.generateContent('Hello, Gemini!');
+  final response = await client.generateText(prompt: 'Hello, Gemini!');
   print(response.text);
 
   // Clean up
@@ -124,8 +124,8 @@ final generationConfig = GenerationConfig(
   topK: 40,
 );
 
-final response = await client.generateContent(
-  'Write a story about AI',
+final response = await client.generateText(
+  prompt: 'Write a story about AI',
   config: generationConfig,
 );
 ```
@@ -156,7 +156,7 @@ The package provides comprehensive error handling:
 
 ```dart
 try {
-  final response = await client.generateContent('Hello');
+  final response = await client.generateText(prompt: 'Hello');
 } on GeminiAuthException catch (e) {
   print('Authentication error: ${e.message}');
 } on GeminiRateLimitException catch (e) {

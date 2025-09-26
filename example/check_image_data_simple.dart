@@ -15,7 +15,7 @@ void main() async {
       GeminiClient(config: const GeminiConfig(apiVersion: ApiVersion.v1));
   await clienting.initialize(apiKey);
 
-  final testing = await clienting.generateContent('testing a prompt');
+  final testing = await clienting.generateText(prompt: 'testing a prompt');
 
   print('what the heck ${testing.text}');
 
