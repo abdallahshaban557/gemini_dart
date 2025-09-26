@@ -13,7 +13,7 @@ void main() async {
   // Key: Use v1beta API version and correct model
   final httpService = HttpService(
     auth: AuthenticationHandler()..setApiKey(apiKey),
-    config: const GeminiConfig(apiVersion: 'v1beta'),
+    config: const GeminiConfig(apiVersion: ApiVersion.v1beta),
   );
 
   print('🎨 Generating image with Gemini...\n');

@@ -56,12 +56,10 @@ class TextContent extends Content {
   String get type => 'text';
 
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'text': text,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'type': type,
+        'text': text,
+      };
 
   /// Create TextContent from JSON
   factory TextContent.fromJson(Map<String, dynamic> json) {
@@ -74,7 +72,9 @@ class TextContent extends Content {
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+    if (identical(this, other)) {
+      return true;
+    }
     return other is TextContent && other.text == text;
   }
 
@@ -87,34 +87,6 @@ class TextContent extends Content {
 
 /// Image content for sending images to Gemini
 class ImageContent extends Content {
-  /// The image data as bytes
-  final Uint8List data;
-
-  /// The MIME type of the image (e.g., 'image/jpeg', 'image/png')
-  final String mimeType;
-
-  /// Creates a new ImageContent with the given data and MIME type
-  ImageContent(this.data, this.mimeType) {
-    if (data.isEmpty) {
-      throw ArgumentError('Image data cannot be empty');
-    }
-    if (!_isValidImageMimeType(mimeType)) {
-      throw ArgumentError('Invalid image MIME type: $mimeType');
-    }
-  }
-
-  @override
-  String get type => 'image';
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'data': data,
-      'mimeType': mimeType,
-    };
-  }
-
   /// Create ImageContent from JSON
   factory ImageContent.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as Uint8List?;
@@ -129,6 +101,32 @@ class ImageContent extends Content {
 
     return ImageContent(data, mimeType);
   }
+
+  /// Creates a new ImageContent with the given data and MIME type
+  ImageContent(this.data, this.mimeType) {
+    if (data.isEmpty) {
+      throw ArgumentError('Image data cannot be empty');
+    }
+    if (!_isValidImageMimeType(mimeType)) {
+      throw ArgumentError('Invalid image MIME type: $mimeType');
+    }
+  }
+
+  /// The image data as bytes
+  final Uint8List data;
+
+  /// The MIME type of the image (e.g., 'image/jpeg', 'image/png')
+  final String mimeType;
+
+  @override
+  String get type => 'image';
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': type,
+        'data': data,
+        'mimeType': mimeType,
+      };
 
   /// Check if the MIME type is valid for images
   static bool _isValidImageMimeType(String mimeType) {
@@ -145,7 +143,9 @@ class ImageContent extends Content {
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+    if (identical(this, other)) {
+      return true;
+    }
     return other is ImageContent &&
         other.mimeType == mimeType &&
         _listEquals(other.data, data);
@@ -160,9 +160,13 @@ class ImageContent extends Content {
 
   /// Helper method to compare Uint8List
   static bool _listEquals(Uint8List a, Uint8List b) {
-    if (a.length != b.length) return false;
+    if (a.length != b.length) {
+      return false;
+    }
     for (int i = 0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
+      if (a[i] != b[i]) {
+        return false;
+      }
     }
     return true;
   }
@@ -170,6 +174,21 @@ class ImageContent extends Content {
 
 /// Video content for sending videos to Gemini
 class VideoContent extends Content {
+  /// Create VideoContent from JSON
+  factory VideoContent.fromJson(Map<String, dynamic> json) {
+    final fileUri = json['fileUri'] as String?;
+    final mimeType = json['mimeType'] as String?;
+
+    if (fileUri == null) {
+      throw ArgumentError('FileUri field is required for VideoContent');
+    }
+    if (mimeType == null) {
+      throw ArgumentError('MimeType field is required for VideoContent');
+    }
+
+    return VideoContent(fileUri, mimeType);
+  }
+
   /// The URI of the uploaded video file
   final String fileUri;
 
@@ -190,28 +209,11 @@ class VideoContent extends Content {
   String get type => 'video';
 
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'fileUri': fileUri,
-      'mimeType': mimeType,
-    };
-  }
-
-  /// Create VideoContent from JSON
-  factory VideoContent.fromJson(Map<String, dynamic> json) {
-    final fileUri = json['fileUri'] as String?;
-    final mimeType = json['mimeType'] as String?;
-
-    if (fileUri == null) {
-      throw ArgumentError('FileUri field is required for VideoContent');
-    }
-    if (mimeType == null) {
-      throw ArgumentError('MimeType field is required for VideoContent');
-    }
-
-    return VideoContent(fileUri, mimeType);
-  }
+  Map<String, dynamic> toJson() => {
+        'type': type,
+        'fileUri': fileUri,
+        'mimeType': mimeType,
+      };
 
   /// Check if the MIME type is valid for videos
   static bool _isValidVideoMimeType(String mimeType) {
@@ -231,7 +233,9 @@ class VideoContent extends Content {
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+    if (identical(this, other)) {
+      return true;
+    }
     return other is VideoContent &&
         other.fileUri == fileUri &&
         other.mimeType == mimeType;
