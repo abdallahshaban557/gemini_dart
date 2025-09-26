@@ -62,7 +62,7 @@ void main() {
         // Assert
         expect(result.text, equals('This is a test image analysis.'));
         verify(mockHttpService.post(
-          'models/gemini-1.5-flash:generateContent',
+          'models/gemini-2.5-flash:generateContent',
           body: anyNamed('body'),
         )).called(1);
       });

@@ -91,7 +91,7 @@ The example shows five key features:
 
 2. **"Model not found"**
 
-   - The example uses `gemini-1.5-flash` model
+   - The example uses `gemini-2.5-flash` model
    - Make sure this model is available in your region
 
 3. **"Rate limit exceeded"**
