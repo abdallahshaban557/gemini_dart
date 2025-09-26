@@ -138,11 +138,11 @@ void main() {
 
       expect(
           config.baseUrl, equals('https://generativelanguage.googleapis.com'));
-      expect(config.timeout, equals(Duration(seconds: 30)));
+      expect(config.timeout, equals(const Duration(seconds: 30)));
       expect(config.maxRetries, equals(3));
       expect(config.enableLogging, isFalse);
       expect(config.cacheConfig, isNull);
-      expect(config.apiVersion, equals('v1'));
+      expect(config.apiVersion, equals(ApiVersion.v1));
     });
 
     test('should create GeminiConfig with custom values', () {
@@ -153,15 +153,15 @@ void main() {
         maxRetries: 5,
         enableLogging: true,
         cacheConfig: cacheConfig,
-        apiVersion: 'v2',
+        apiVersion: ApiVersion.v1beta,
       );
 
       expect(config.baseUrl, equals('https://custom.api.com'));
-      expect(config.timeout, equals(Duration(seconds: 60)));
+      expect(config.timeout, equals(const Duration(seconds: 60)));
       expect(config.maxRetries, equals(5));
       expect(config.enableLogging, isTrue);
       expect(config.cacheConfig, equals(cacheConfig));
-      expect(config.apiVersion, equals('v2'));
+      expect(config.apiVersion, equals(ApiVersion.v1beta));
     });
 
     test('should serialize to JSON correctly', () {
@@ -172,7 +172,7 @@ void main() {
         maxRetries: 2,
         enableLogging: true,
         cacheConfig: cacheConfig,
-        apiVersion: 'v2',
+        apiVersion: ApiVersion.v1beta,
       );
 
       final json = config.toJson();
@@ -182,7 +182,7 @@ void main() {
       expect(json['maxRetries'], equals(2));
       expect(json['enableLogging'], isTrue);
       expect(json['cacheConfig'], isNotNull);
-      expect(json['apiVersion'], equals('v2'));
+      expect(json['apiVersion'], equals('v1beta'));
     });
 
     test('should serialize to JSON without cache config when null', () {
@@ -204,18 +204,18 @@ void main() {
           'ttlSeconds': 1800,
           'storageType': 'memory',
         },
-        'apiVersion': 'v2',
+        'apiVersion': 'v1beta',
       };
 
       final config = GeminiConfig.fromJson(json);
 
       expect(config.baseUrl, equals('https://custom.api.com'));
-      expect(config.timeout, equals(Duration(seconds: 45)));
+      expect(config.timeout, equals(const Duration(seconds: 45)));
       expect(config.maxRetries, equals(2));
       expect(config.enableLogging, isTrue);
       expect(config.cacheConfig, isNotNull);
       expect(config.cacheConfig!.enabled, isFalse);
-      expect(config.apiVersion, equals('v2'));
+      expect(config.apiVersion, equals(ApiVersion.v1beta));
     });
 
     test('should handle missing fields in JSON with defaults', () {
@@ -224,11 +224,11 @@ void main() {
 
       expect(
           config.baseUrl, equals('https://generativelanguage.googleapis.com'));
-      expect(config.timeout, equals(Duration(seconds: 30)));
+      expect(config.timeout, equals(const Duration(seconds: 30)));
       expect(config.maxRetries, equals(3));
       expect(config.enableLogging, isFalse);
       expect(config.cacheConfig, isNull);
-      expect(config.apiVersion, equals('v1'));
+      expect(config.apiVersion, equals(ApiVersion.v1));
     });
 
     test('should create copy with modified values', () {
@@ -279,11 +279,11 @@ void main() {
     });
 
     test('should validate apiVersion', () {
-      const validConfig = GeminiConfig(apiVersion: 'v1');
+      const validConfig = GeminiConfig(apiVersion: ApiVersion.v1);
       expect(() => validConfig.validate(), returnsNormally);
 
-      const emptyConfig = GeminiConfig(apiVersion: '');
-      expect(() => emptyConfig.validate(), throwsArgumentError);
+      const validBetaConfig = GeminiConfig(apiVersion: ApiVersion.v1beta);
+      expect(() => validBetaConfig.validate(), returnsNormally);
     });
 
     test('should validate cache config when present', () {
@@ -312,6 +312,24 @@ void main() {
       expect(string, contains('GeminiConfig'));
       expect(string, contains('baseUrl: https://api.com'));
       expect(string, contains('maxRetries: 5'));
+    });
+  });
+
+  group('ApiVersion', () {
+    test('should have correct enum values', () {
+      expect(ApiVersion.values.length, equals(2));
+      expect(ApiVersion.values, contains(ApiVersion.v1));
+      expect(ApiVersion.values, contains(ApiVersion.v1beta));
+    });
+
+    test('should have correct string values', () {
+      expect(ApiVersion.v1.value, equals('v1'));
+      expect(ApiVersion.v1beta.value, equals('v1beta'));
+    });
+
+    test('should convert to string correctly', () {
+      expect(ApiVersion.v1.toString(), equals('v1'));
+      expect(ApiVersion.v1beta.toString(), equals('v1beta'));
     });
   });
 

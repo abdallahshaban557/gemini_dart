@@ -87,12 +87,12 @@ class ConfigurationManager {
   String get baseUrl => _config.baseUrl;
 
   /// Gets the API version
-  String get apiVersion => _config.apiVersion;
+  String get apiVersion => _config.apiVersion.value;
 
   /// Gets the full API endpoint URL
   String getApiEndpoint(String path) {
     final cleanPath = path.startsWith('/') ? path.substring(1) : path;
-    return '${_config.baseUrl}/${_config.apiVersion}/$cleanPath';
+    return '${_config.baseUrl}/${_config.apiVersion.value}/$cleanPath';
   }
 
   /// Checks if the configuration is ready for API calls

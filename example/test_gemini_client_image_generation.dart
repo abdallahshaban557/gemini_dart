@@ -13,7 +13,7 @@ void main() async {
   print('🧪 Testing GeminiClient image generation...\n');
 
   final client = GeminiClient();
-  await client.initialize(apiKey: apiKey);
+  await client.initialize(apiKey);
 
   try {
     print('🎨 Generating image: "A peaceful lake surrounded by trees"');

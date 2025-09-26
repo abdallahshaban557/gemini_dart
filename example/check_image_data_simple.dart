@@ -11,9 +11,17 @@ void main() async {
     exit(1);
   }
 
+  final clienting =
+      GeminiClient(config: const GeminiConfig(apiVersion: ApiVersion.v1));
+  await clienting.initialize(apiKey);
+
+  final testing = await clienting.generateContent('testing a prompt');
+
+  print('what the heck ${testing.text}');
+
   final httpService = HttpService(
     auth: AuthenticationHandler()..setApiKey(apiKey),
-    config: const GeminiConfig(apiVersion: 'v1beta'),
+    config: const GeminiConfig(apiVersion: ApiVersion.v1beta),
   );
 
   try {
@@ -24,8 +32,8 @@ void main() async {
           {
             'parts': [
               {
-                'text':
-                    'generate a picture of the swiss alps with Godzilla in the middle'
+                'text': 'generate a picture of the swiss alps with '
+                    'Godzilla in the middle'
               }
             ]
           }
@@ -37,28 +45,28 @@ void main() async {
     print('Response keys: ${response.keys}');
 
     if (response['candidates'] != null) {
-      final candidates = response['candidates'] as List;
+      final candidates = response['candidates'] as List<dynamic>;
       print('Candidates: ${candidates.length}');
 
-      for (int i = 0; i < candidates.length; i++) {
-        final candidate = candidates[i];
+      for (var i = 0; i < candidates.length; i++) {
+        final candidate = candidates[i] as Map<String, dynamic>;
         print('Candidate $i keys: ${candidate.keys}');
 
         if (candidate['content'] != null) {
-          final content = candidate['content'];
+          final content = candidate['content'] as Map<String, dynamic>;
           print('  Content keys: ${content.keys}');
 
           if (content['parts'] != null) {
-            final parts = content['parts'] as List;
+            final parts = content['parts'] as List<dynamic>;
             print('  Parts: ${parts.length}');
 
-            for (int j = 0; j < parts.length; j++) {
-              final part = parts[j];
+            for (var j = 0; j < parts.length; j++) {
+              final part = parts[j] as Map<String, dynamic>;
               print('    Part $j keys: ${part.keys}');
 
               if (part.containsKey('inlineData')) {
                 print('    🖼️  FOUND IMAGE DATA!');
-                final inlineData = part['inlineData'];
+                final inlineData = part['inlineData'] as Map<String, dynamic>;
                 print('    MIME type: ${inlineData['mimeType']}');
 
                 final data = inlineData['data'] as String?;
@@ -77,15 +85,16 @@ void main() async {
 
               if (part.containsKey('text')) {
                 final text = part['text'] as String;
-                print(
-                    '    📝 Text: ${text.length > 50 ? text.substring(0, 50) + '...' : text}');
+                final displayText =
+                    text.length > 50 ? '${text.substring(0, 50)}...' : text;
+                print('    📝 Text: $displayText');
               }
             }
           }
         }
       }
     }
-  } catch (e) {
+  } on Exception catch (e) {
     print('❌ Error: $e');
   }
 
@@ -95,20 +104,26 @@ void main() async {
 Future<void> _saveImage(List<int> imageData, String filename) async {
   try {
     final dir = Directory('example/generated_images');
-    if (!await dir.exists()) await dir.create(recursive: true);
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
 
     final file = File('example/generated_images/$filename');
     await file.writeAsBytes(imageData);
 
     print('💾 Image saved: ${file.path}');
     print('📏 Size: ${_formatSize(imageData.length)}');
-  } catch (e) {
+  } on Exception catch (e) {
     print('❌ Failed to save image: $e');
   }
 }
 
 String _formatSize(int bytes) {
-  if (bytes < 1024) return '$bytes B';
-  if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
+  if (bytes < 1024) {
+    return '$bytes B';
+  }
+  if (bytes < 1024 * 1024) {
+    return '${(bytes / 1024).toStringAsFixed(1)} KB';
+  }
   return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
 }

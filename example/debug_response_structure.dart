@@ -12,7 +12,7 @@ void main() async {
 
   final httpService = HttpService(
     auth: AuthenticationHandler()..setApiKey(apiKey),
-    config: const GeminiConfig(apiVersion: 'v1beta'),
+    config: const GeminiConfig(apiVersion: ApiVersion.v1beta),
   );
 
   try {
