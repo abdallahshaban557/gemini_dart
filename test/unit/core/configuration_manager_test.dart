@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 import 'package:gemini_dart/src/core/configuration_manager.dart';
 import 'package:gemini_dart/src/core/auth.dart';
+import 'package:gemini_dart/src/core/exceptions.dart';
 import 'package:gemini_dart/src/core/secure_storage.dart';
 import 'package:gemini_dart/src/models/gemini_config.dart';
 

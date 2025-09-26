@@ -7,7 +7,6 @@ import 'dart:async' as _i3;
 import 'dart:convert' as _i4;
 import 'dart:typed_data' as _i6;
 
-import 'package:gemini_dart/src/core/auth.dart' as _i7;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
@@ -281,76 +280,4 @@ class MockClient extends _i1.Mock implements _i2.Client {
         ),
         returnValueForMissingStub: null,
       );
-}
-
-/// A class which mocks [AuthenticationHandler].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockAuthenticationHandler extends _i1.Mock
-    implements _i7.AuthenticationHandler {
-  MockAuthenticationHandler() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  bool get isAuthenticated => (super.noSuchMethod(
-        Invocation.getter(#isAuthenticated),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  void setApiKey(String? apiKey) => super.noSuchMethod(
-        Invocation.method(
-          #setApiKey,
-          [apiKey],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  bool validateApiKey(String? apiKey) => (super.noSuchMethod(
-        Invocation.method(
-          #validateApiKey,
-          [apiKey],
-        ),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  _i3.Future<void> storeApiKey(String? apiKey) => (super.noSuchMethod(
-        Invocation.method(
-          #storeApiKey,
-          [apiKey],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<String?> retrieveStoredApiKey() => (super.noSuchMethod(
-        Invocation.method(
-          #retrieveStoredApiKey,
-          [],
-        ),
-        returnValue: _i3.Future<String?>.value(),
-      ) as _i3.Future<String?>);
-
-  @override
-  _i3.Future<void> clearStoredApiKey() => (super.noSuchMethod(
-        Invocation.method(
-          #clearStoredApiKey,
-          [],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-
-  @override
-  Map<String, String> getAuthHeaders() => (super.noSuchMethod(
-        Invocation.method(
-          #getAuthHeaders,
-          [],
-        ),
-        returnValue: <String, String>{},
-      ) as Map<String, String>);
 }

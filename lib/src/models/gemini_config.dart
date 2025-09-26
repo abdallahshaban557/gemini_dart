@@ -83,16 +83,15 @@ class GeminiConfig {
     bool? enableLogging,
     CacheConfig? cacheConfig,
     ApiVersion? apiVersion,
-  }) {
-    return GeminiConfig(
-      baseUrl: baseUrl ?? this.baseUrl,
-      timeout: timeout ?? this.timeout,
-      maxRetries: maxRetries ?? this.maxRetries,
-      enableLogging: enableLogging ?? this.enableLogging,
-      cacheConfig: cacheConfig ?? this.cacheConfig,
-      apiVersion: apiVersion ?? this.apiVersion,
-    );
-  }
+  }) =>
+      GeminiConfig(
+        baseUrl: baseUrl ?? this.baseUrl,
+        timeout: timeout ?? this.timeout,
+        maxRetries: maxRetries ?? this.maxRetries,
+        enableLogging: enableLogging ?? this.enableLogging,
+        cacheConfig: cacheConfig ?? this.cacheConfig,
+        apiVersion: apiVersion ?? this.apiVersion,
+      );
 
   /// Validate the configuration
   void validate() {
@@ -152,6 +151,25 @@ class GeminiConfig {
 
 /// Configuration for response caching
 class CacheConfig {
+  /// Creates a new CacheConfig
+  const CacheConfig({
+    this.enabled = true,
+    this.maxSizeBytes = 10 * 1024 * 1024, // 10MB default
+    this.ttl = const Duration(hours: 1),
+    this.storageType = CacheStorageType.memory,
+  });
+
+  /// Create CacheConfig from JSON
+  factory CacheConfig.fromJson(Map<String, dynamic> json) => CacheConfig(
+        enabled: json['enabled'] as bool? ?? true,
+        maxSizeBytes: json['maxSizeBytes'] as int? ?? 10 * 1024 * 1024,
+        ttl: Duration(seconds: json['ttlSeconds'] as int? ?? 3600),
+        storageType: CacheStorageType.values.firstWhere(
+          (type) => type.name == (json['storageType'] as String? ?? 'memory'),
+          orElse: () => CacheStorageType.memory,
+        ),
+      );
+
   /// Whether caching is enabled
   final bool enabled;
 
@@ -164,36 +182,13 @@ class CacheConfig {
   /// Cache storage type
   final CacheStorageType storageType;
 
-  /// Creates a new CacheConfig
-  const CacheConfig({
-    this.enabled = true,
-    this.maxSizeBytes = 10 * 1024 * 1024, // 10MB default
-    this.ttl = const Duration(hours: 1),
-    this.storageType = CacheStorageType.memory,
-  });
-
-  /// Create CacheConfig from JSON
-  factory CacheConfig.fromJson(Map<String, dynamic> json) {
-    return CacheConfig(
-      enabled: json['enabled'] as bool? ?? true,
-      maxSizeBytes: json['maxSizeBytes'] as int? ?? 10 * 1024 * 1024,
-      ttl: Duration(seconds: json['ttlSeconds'] as int? ?? 3600),
-      storageType: CacheStorageType.values.firstWhere(
-        (type) => type.name == (json['storageType'] as String? ?? 'memory'),
-        orElse: () => CacheStorageType.memory,
-      ),
-    );
-  }
-
   /// Convert to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'enabled': enabled,
-      'maxSizeBytes': maxSizeBytes,
-      'ttlSeconds': ttl.inSeconds,
-      'storageType': storageType.name,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'enabled': enabled,
+        'maxSizeBytes': maxSizeBytes,
+        'ttlSeconds': ttl.inSeconds,
+        'storageType': storageType.name,
+      };
 
   /// Create a copy with modified values
   CacheConfig copyWith({
@@ -201,14 +196,13 @@ class CacheConfig {
     int? maxSizeBytes,
     Duration? ttl,
     CacheStorageType? storageType,
-  }) {
-    return CacheConfig(
-      enabled: enabled ?? this.enabled,
-      maxSizeBytes: maxSizeBytes ?? this.maxSizeBytes,
-      ttl: ttl ?? this.ttl,
-      storageType: storageType ?? this.storageType,
-    );
-  }
+  }) =>
+      CacheConfig(
+        enabled: enabled ?? this.enabled,
+        maxSizeBytes: maxSizeBytes ?? this.maxSizeBytes,
+        ttl: ttl ?? this.ttl,
+        storageType: storageType ?? this.storageType,
+      );
 
   /// Validate the cache configuration
   void validate() {
@@ -223,7 +217,9 @@ class CacheConfig {
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+    if (identical(this, other)) {
+      return true;
+    }
     return other is CacheConfig &&
         other.enabled == enabled &&
         other.maxSizeBytes == maxSizeBytes &&
