@@ -48,7 +48,7 @@ void main() {
 
       test('should throw exception when not initialized', () {
         expect(
-          () => client.generateContent('test'),
+          () => client.generateText(prompt: 'test'),
           throwsA(isA<GeminiException>()),
         );
       });
@@ -86,7 +86,7 @@ void main() {
           return;
         }
 
-        final response = await client.generateContent('Hello, world!');
+        final response = await client.generateText(prompt: 'Hello, world!');
 
         expect(response, isNotNull);
         expect(response.candidates, isNotEmpty);
@@ -105,8 +105,8 @@ void main() {
           maxOutputTokens: 100,
         );
 
-        final response = await client.generateContent(
-          'Write a short poem',
+        final response = await client.generateText(
+          prompt: 'Write a short poem',
           config: config,
         );
 
@@ -121,7 +121,7 @@ void main() {
           return;
         }
 
-        final stream = client.generateContentStream('Tell me a story');
+        final stream = client.generateTextStream(prompt: 'Tell me a story');
         final responses = <String>[];
 
         await for (final response in stream) {
@@ -140,7 +140,7 @@ void main() {
         }
 
         expect(
-          () => client.generateContent(''),
+          () => client.generateText(prompt: ''),
           throwsA(isA<GeminiValidationException>()),
         );
       });
