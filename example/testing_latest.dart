@@ -10,15 +10,27 @@ void main() async {
   }
 
   final client = GeminiClient();
-  await client.initialize(apiKey); // Add await for the Future
+  await client.initialize(apiKey);
 
   try {
-    final result = await client.generateContent('testing a prompt');
+    // Using the new generateText method for better clarity
+    print('🔄 Generating text...');
+    final result = await client.generateText(
+      prompt: 'Write a short, friendly greeting',
+      config: const GenerationConfig(
+        temperature: 0.1,
+      ),
+    );
 
-    print(result.text);
+    final result1 = await client.generateFromContent([]));
+
+    print('✅ Generated text: ${result.text}');
+
+    // The old generateContent method still works but is deprecated
+    // final deprecatedResult = await client.generateContent('test');
   } catch (e) {
-    print('run into exception ${e.toString()}');
+    print('❌ Exception: ${e.toString()}');
+  } finally {
+    client.dispose();
   }
-
-  exit(1);
 }

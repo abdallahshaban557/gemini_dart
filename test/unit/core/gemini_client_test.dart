@@ -82,7 +82,7 @@ void main() {
 
       test('should throw when methods called before initialization', () {
         expect(
-          () => client.generateContent('test'),
+          () => client.generateText(prompt: 'test'),
           throwsA(isA<GeminiException>()),
         );
 

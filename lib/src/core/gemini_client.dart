@@ -82,12 +82,12 @@ class GeminiClient {
     }
   }
 
-  /// Generate content from a simple text prompt
+  /// Generate text from a simple text prompt
   ///
   /// This is the most basic method for text generation.
   /// For more advanced use cases, use [generateFromContent] or the handler methods.
-  Future<GeminiResponse> generateContent(
-    String prompt, {
+  Future<GeminiResponse> generateText({
+    required String prompt,
     GenerationConfig? config,
   }) async {
     _ensureInitialized();
@@ -139,11 +139,11 @@ class GeminiClient {
     }
   }
 
-  /// Generate streaming content from a text prompt
+  /// Generate streaming text from a text prompt
   ///
-  /// Returns a stream of partial responses for real-time content generation.
-  Stream<GeminiResponse> generateContentStream(
-    String prompt, {
+  /// Returns a stream of partial responses for real-time text generation.
+  Stream<GeminiResponse> generateTextStream({
+    required String prompt,
     GenerationConfig? config,
   }) async* {
     _ensureInitialized();
