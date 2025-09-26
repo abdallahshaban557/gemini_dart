@@ -13,7 +13,7 @@ class ImageHandler {
   /// Creates a new ImageHandler
   ImageHandler({
     required HttpService httpService,
-    String model = 'gemini-1.5-flash',
+    String model = 'gemini-2.5-flash',
   })  : _httpService = httpService,
         _model = model;
 

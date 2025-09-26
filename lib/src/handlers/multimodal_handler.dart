@@ -14,7 +14,7 @@ class MultiModalHandler {
   /// Creates a new MultiModalHandler
   MultiModalHandler({
     required HttpService httpService,
-    String model = 'gemini-1.5-flash',
+    String model = 'gemini-2.5-flash',
   })  : _httpService = httpService,
         _model = model;
 
