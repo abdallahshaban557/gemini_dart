@@ -33,12 +33,13 @@ class TextHandler {
     }
 
     final content = TextContent(prompt);
-    return generateFromContent([content], config: config, context: context);
+    return generateFromContent(
+        contents: [content], config: config, context: context);
   }
 
   /// Generate content from a list of content objects
-  Future<GeminiResponse> generateFromContent(
-    List<Content> contents, {
+  Future<GeminiResponse> generateFromContent({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -94,13 +95,13 @@ class TextHandler {
     }
 
     final content = TextContent(prompt);
-    yield* generateFromContentStream([content],
-        config: config, context: context);
+    yield* generateFromContentStream(
+        contents: [content], config: config, context: context);
   }
 
   /// Generate streaming content from a list of content objects
-  Stream<GeminiResponse> generateFromContentStream(
-    List<Content> contents, {
+  Stream<GeminiResponse> generateFromContentStream({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async* {
@@ -190,7 +191,8 @@ class TextHandler {
     }
 
     final content = TextContent(prompt);
-    return generateFromContent([content], config: config, context: context);
+    return generateFromContent(
+        contents: [content], config: config, context: context);
   }
 
   /// Generate streaming content with conversation context
@@ -207,8 +209,8 @@ class TextHandler {
     }
 
     final content = TextContent(prompt);
-    yield* generateFromContentStream([content],
-        config: config, context: context);
+    yield* generateFromContentStream(
+        contents: [content], config: config, context: context);
   }
 
   /// Convert Content object to API part format

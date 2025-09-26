@@ -272,7 +272,7 @@ void main() {
         // Act
         final responses = <GeminiResponse>[];
         await for (final response
-            in imageHandler.generateFromContentStream(contents)) {
+            in imageHandler.generateFromContentStream(contents: contents)) {
           responses.add(response);
         }
 

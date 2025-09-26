@@ -58,7 +58,7 @@ void main() async {
     ];
 
     final multiModalResult = await client.generateFromContent(
-      contents,
+      contents: contents,
       config: const GenerationConfig(
         temperature: 0.6,
         maxOutputTokens: 150,

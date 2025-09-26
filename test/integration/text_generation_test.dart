@@ -84,7 +84,8 @@ void main() {
         ];
 
         // Act
-        final response = await textHandler.generateFromContent(contents);
+        final response =
+            await textHandler.generateFromContent(contents: contents);
 
         // Assert
         expect(response.text, isNotNull);

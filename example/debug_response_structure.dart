@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:gemini_dart/gemini_dart.dart';
 

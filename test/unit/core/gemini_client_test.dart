@@ -13,8 +13,6 @@ import '../../../lib/src/handlers/multimodal_handler.dart';
 import '../../../lib/src/handlers/text_handler.dart';
 import '../../../lib/src/models/content.dart';
 import '../../../lib/src/models/gemini_config.dart';
-import '../../../lib/src/models/generation_config.dart';
-import '../../../lib/src/models/response.dart';
 import '../../../lib/src/services/http_service.dart';
 
 import 'gemini_client_test.mocks.dart';
@@ -158,7 +156,7 @@ void main() {
 
       test('should throw on empty content list', () async {
         expect(
-          () => client.generateFromContent([]),
+          () => client.generateFromContent(contents: []),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -237,14 +235,15 @@ void main() {
     group('Validation', () {
       test('should validate empty content lists', () {
         expect(
-          () => client.generateFromContent([]),
+          () => client.generateFromContent(contents: []),
           throwsA(isA<GeminiValidationException>()),
         );
       });
 
       test('should validate streaming content lists', () async {
         try {
-          await for (final _ in client.generateFromContentStream([])) {
+          await for (final _
+              in client.generateFromContentStream(contents: [])) {
             // Should not reach here
           }
           fail('Expected GeminiValidationException');

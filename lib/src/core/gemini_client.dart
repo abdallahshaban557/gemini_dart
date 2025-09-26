@@ -98,8 +98,8 @@ class GeminiClient {
   ///
   /// This method supports multi-modal content including text, images, and videos.
   /// It automatically routes to the appropriate handler based on content types.
-  Future<GeminiResponse> generateFromContent(
-    List<Content> contents, {
+  Future<GeminiResponse> generateFromContent({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -127,7 +127,7 @@ class GeminiClient {
     } else if (hasText) {
       // Use text handler for text-only content
       return _textHandler!.generateFromContent(
-        contents,
+        contents: contents,
         config: config,
         context: context,
       );
@@ -151,8 +151,8 @@ class GeminiClient {
   }
 
   /// Generate streaming content from a list of content objects
-  Stream<GeminiResponse> generateFromContentStream(
-    List<Content> contents, {
+  Stream<GeminiResponse> generateFromContentStream({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async* {
@@ -180,7 +180,7 @@ class GeminiClient {
     } else if (hasText) {
       // Use text handler for text-only content
       yield* _textHandler!.generateFromContentStream(
-        contents,
+        contents: contents,
         config: config,
         context: context,
       );
