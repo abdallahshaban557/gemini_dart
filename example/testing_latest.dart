@@ -12,7 +12,13 @@ void main() async {
   final client = GeminiClient();
   await client.initialize(apiKey); // Add await for the Future
 
-  final result = await client.generateContent('testing a prompt');
+  try {
+    final result = await client.generateContent('testing a prompt');
 
-  print(result.text);
+    print(result.text);
+  } catch (e) {
+    print('run into exception ${e.toString()}');
+  }
+
+  exit(1);
 }
