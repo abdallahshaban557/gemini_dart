@@ -31,7 +31,9 @@ void main() async {
     // Generate content using generateFromContent
     print('\n🔄 Generating content from Content objects...');
     final contentResult = await client.generateFromContent(
-      [TextContent('Explain what machine learning is in simple terms')],
+      contents: [
+        TextContent('Explain what machine learning is in simple terms')
+      ],
       config: const GenerationConfig(
         temperature: 0.5,
         maxOutputTokens: 150,

@@ -323,16 +323,17 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
       ) as _i4.Future<_i2.GeminiResponse>);
 
   @override
-  _i4.Future<_i2.GeminiResponse> generateFromContent(
-    List<_i10.Content>? contents, {
+  _i4.Future<_i2.GeminiResponse> generateFromContent({
+    required List<_i10.Content>? contents,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #generateFromContent,
-          [contents],
+          [],
           {
+            #contents: contents,
             #config: config,
             #context: context,
           },
@@ -341,8 +342,9 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
           this,
           Invocation.method(
             #generateFromContent,
-            [contents],
+            [],
             {
+              #contents: contents,
               #config: config,
               #context: context,
             },
@@ -369,16 +371,17 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
       ) as _i4.Stream<_i2.GeminiResponse>);
 
   @override
-  _i4.Stream<_i2.GeminiResponse> generateFromContentStream(
-    List<_i10.Content>? contents, {
+  _i4.Stream<_i2.GeminiResponse> generateFromContentStream({
+    required List<_i10.Content>? contents,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #generateFromContentStream,
-          [contents],
+          [],
           {
+            #contents: contents,
             #config: config,
             #context: context,
           },
@@ -539,16 +542,17 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
       ) as _i4.Future<_i2.GeminiResponse>);
 
   @override
-  _i4.Stream<_i2.GeminiResponse> generateFromContentStream(
-    List<_i10.Content>? contents, {
+  _i4.Stream<_i2.GeminiResponse> generateFromContentStream({
+    required List<_i10.Content>? contents,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #generateFromContentStream,
-          [contents],
+          [],
           {
+            #contents: contents,
             #config: config,
             #context: context,
           },

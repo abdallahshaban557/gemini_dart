@@ -127,8 +127,8 @@ class ImageHandler {
   }
 
   /// Generate streaming content from mixed content types
-  Stream<GeminiResponse> generateFromContentStream(
-    List<Content> contents, {
+  Stream<GeminiResponse> generateFromContentStream({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async* {

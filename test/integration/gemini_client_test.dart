@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 
 import '../../lib/src/core/gemini_client.dart';
-import '../../lib/src/handlers/conversation_context.dart';
 import '../../lib/src/models/content.dart';
 import '../../lib/src/models/gemini_config.dart';
 import '../../lib/src/models/generation_config.dart';
@@ -179,7 +178,7 @@ void main() {
           ImageContent(imageData, 'image/png'),
         ];
 
-        final response = await client.generateFromContent(contents);
+        final response = await client.generateFromContent(contents: contents);
 
         expect(response, isNotNull);
         expect(response.candidates, isNotEmpty);
@@ -193,7 +192,7 @@ void main() {
         }
 
         expect(
-          () => client.generateFromContent([]),
+          () => client.generateFromContent(contents: []),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -417,7 +416,7 @@ void main() {
 
         // First message
         final response1 = await client.generateFromContent(
-          [TextContent('My name is Alice')],
+          contents: [TextContent('My name is Alice')],
           context: context,
         );
 
@@ -426,7 +425,7 @@ void main() {
 
         // Second message referencing first
         final response2 = await client.generateFromContent(
-          [TextContent('What is my name?')],
+          contents: [TextContent('What is my name?')],
           context: context,
         );
 
@@ -545,7 +544,7 @@ void main() {
         await client.initialize(testApiKey);
 
         expect(
-          () => client.generateFromContent([]),
+          () => client.generateFromContent(contents: []),
           throwsA(isA<GeminiValidationException>()),
         );
       });

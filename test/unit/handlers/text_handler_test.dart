@@ -183,7 +183,8 @@ void main() {
         )).thenAnswer((_) async => expectedResponse);
 
         // Act
-        final result = await textHandler.generateFromContent(contents);
+        final result =
+            await textHandler.generateFromContent(contents: contents);
 
         // Assert
         expect(result.text, equals('Generated response'));
@@ -196,7 +197,7 @@ void main() {
       test('should throw validation exception for empty contents', () async {
         // Act & Assert
         expect(
-          () => textHandler.generateFromContent([]),
+          () => textHandler.generateFromContent(contents: []),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -209,7 +210,7 @@ void main() {
 
         // Act & Assert
         expect(
-          () => textHandler.generateFromContent(contents),
+          () => textHandler.generateFromContent(contents: contents),
           throwsA(isA<GeminiNetworkException>()),
         );
       });
@@ -406,7 +407,7 @@ void main() {
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
-        await textHandler.generateFromContent(contents);
+        await textHandler.generateFromContent(contents: contents);
 
         final captured = verify(mockHttpService.post(
           any,
@@ -440,7 +441,8 @@ void main() {
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
-        await textHandler.generateFromContent(contents, context: context);
+        await textHandler.generateFromContent(
+            contents: contents, context: context);
 
         final captured = verify(mockHttpService.post(
           any,
