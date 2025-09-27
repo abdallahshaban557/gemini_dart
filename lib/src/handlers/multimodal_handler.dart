@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import '../core/exceptions.dart';
@@ -306,9 +307,9 @@ class MultiModalHandler {
       return {'text': content.text};
     } else if (content is ImageContent) {
       return {
-        'inlineData': {
-          'mimeType': content.mimeType,
-          'data': content.data,
+        'inline_data': {
+          'mime_type': content.mimeType,
+          'data': base64Encode(content.data),
         }
       };
     } else if (content is VideoContent) {
