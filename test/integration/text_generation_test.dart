@@ -43,7 +43,7 @@ void main() {
 
         // Act
         final response = await textHandler.generateContent(
-          'Say hello in a friendly way',
+          prompt: 'Say hello in a friendly way',
         );
 
         // Assert
@@ -64,7 +64,7 @@ void main() {
 
         // Act
         final response = await textHandler.generateContent(
-          'Write a very short greeting',
+          prompt: 'Write a very short greeting',
           config: config,
         );
 
@@ -102,7 +102,7 @@ void main() {
 
         // Act
         await for (final response in textHandler.generateContentStream(
-          'Tell me a short story about a robot',
+          prompt: 'Tell me a short story about a robot',
         )) {
           if (response.text != null) {
             responses.add(response.text!);
@@ -127,7 +127,7 @@ void main() {
 
         // Act
         await for (final response in textHandler.generateContentStream(
-          'Write a creative haiku',
+          prompt: 'Write a creative haiku',
           config: config,
         )) {
           if (response.text != null) {
@@ -149,14 +149,14 @@ void main() {
 
         // Act - First message
         final response1 = await textHandler.generateWithContext(
-          context,
-          'My name is Alice. Remember this.',
+          context: context,
+          prompt: 'My name is Alice. Remember this.',
         );
 
         // Act - Second message referencing first
         final response2 = await textHandler.generateWithContext(
-          context,
-          'What is my name?',
+          context: context,
+          prompt: 'What is my name?',
         );
 
         // Assert
@@ -174,8 +174,8 @@ void main() {
 
         // First establish context
         await textHandler.generateWithContext(
-          context,
-          'I like pizza. Remember this preference.',
+          context: context,
+          prompt: 'I like pizza. Remember this preference.',
         );
 
         final responses = <String>[];
@@ -206,8 +206,8 @@ void main() {
         // Act - Add more messages than the limit
         for (int i = 0; i < 6; i++) {
           await textHandler.generateWithContext(
-            context,
-            'Message number $i',
+            context: context,
+            prompt: 'Message number $i',
           );
         }
 
@@ -226,7 +226,7 @@ void main() {
 
         // Act & Assert
         expect(
-          () => textHandler.generateContent(''),
+          () => textHandler.generateContent(prompt: ''),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -246,7 +246,7 @@ void main() {
 
         // Act & Assert
         expect(
-          () => invalidHandler.generateContent('Test prompt'),
+          () => invalidHandler.generateContent(prompt: 'Test prompt'),
           throwsA(isA<GeminiException>()),
         );
 
@@ -263,7 +263,7 @@ void main() {
         // Act & Assert
         expect(
           () => textHandler.generateContent(
-            'Test prompt',
+            prompt: 'Test prompt',
             config: invalidConfig,
           ),
           throwsA(isA<ArgumentError>()),
@@ -282,7 +282,7 @@ void main() {
         for (int i = 0; i < 3; i++) {
           futures.add(
             textHandler
-                .generateContent('Say hello $i')
+                .generateContent(prompt: 'Say hello $i')
                 .then((r) => r.text ?? ''),
           );
         }
@@ -304,7 +304,7 @@ void main() {
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' * 100;
 
         // Act
-        final response = await textHandler.generateContent(largePrompt);
+        final response = await textHandler.generateContent(prompt: largePrompt);
 
         // Assert
         expect(response.text, isNotNull);

@@ -21,9 +21,9 @@ class ImageHandler {
   final String _model;
 
   /// Generate content from an image with optional text prompt
-  Future<GeminiResponse> analyzeImage(
-    Uint8List imageData,
-    String mimeType, {
+  Future<GeminiResponse> analyzeImage({
+    required Uint8List imageData,
+    required String mimeType,
     String? prompt,
     GenerationConfig? config,
     ConversationContext? context,
@@ -41,7 +41,8 @@ class ImageHandler {
     // Add image content
     contents.add(ImageContent(imageData, mimeType));
 
-    return generateFromContent(contents, config: config, context: context);
+    return generateFromContent(
+        contents: contents, config: config, context: context);
   }
 
   /// Generate content from multiple images with optional text prompt
@@ -71,12 +72,13 @@ class ImageHandler {
       contents.add(ImageContent(image.data, image.mimeType));
     }
 
-    return generateFromContent(contents, config: config, context: context);
+    return generateFromContent(
+        contents: contents, config: config, context: context);
   }
 
   /// Generate content from mixed content types (text, images)
-  Future<GeminiResponse> generateFromContent(
-    List<Content> contents, {
+  Future<GeminiResponse> generateFromContent({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -206,19 +208,20 @@ class ImageHandler {
       ..add(ImageContent(image1Data, image1MimeType))
       ..add(ImageContent(image2Data, image2MimeType));
 
-    return generateFromContent(contents, config: config, context: context);
+    return generateFromContent(
+        contents: contents, config: config, context: context);
   }
 
   /// Extract text from an image (OCR functionality)
-  Future<GeminiResponse> extractTextFromImage(
-    Uint8List imageData,
-    String mimeType, {
+  Future<GeminiResponse> extractTextFromImage({
+    required Uint8List imageData,
+    required String mimeType,
     GenerationConfig? config,
     ConversationContext? context,
   }) =>
       analyzeImage(
-        imageData,
-        mimeType,
+        imageData: imageData,
+        mimeType: mimeType,
         prompt: 'Extract and transcribe all text visible in this image. '
             'Maintain the original formatting and structure as much as '
             'possible.',
@@ -227,9 +230,9 @@ class ImageHandler {
       );
 
   /// Describe an image in detail
-  Future<GeminiResponse> describeImage(
-    Uint8List imageData,
-    String mimeType, {
+  Future<GeminiResponse> describeImage({
+    required Uint8List imageData,
+    required String mimeType,
     String? focusArea,
     GenerationConfig? config,
     ConversationContext? context,
@@ -241,8 +244,8 @@ class ImageHandler {
             'setting, colors, and any notable features.';
 
     return analyzeImage(
-      imageData,
-      mimeType,
+      imageData: imageData,
+      mimeType: mimeType,
       prompt: prompt,
       config: config,
       context: context,

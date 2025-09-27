@@ -5,3 +5,5 @@ export 'content.dart';
 export 'response.dart';
 export 'generation_config.dart';
 export 'gemini_config.dart';
+export 'gemini_models.dart';
+export 'model_interface.dart';

@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:gemini_dart/gemini_dart.dart';
 
-/// Simple example of using the Gemini API
+/// Example using model selection in constructor
 void main() async {
   // Get your API key from environment
   final apiKey = Platform.environment['GEMINI_API_KEY'];
@@ -11,40 +12,37 @@ void main() async {
     exit(1);
   }
 
-  // Initialize the client
-  final client = GeminiClient();
-  await client.initialize(apiKey);
-
   try {
-    // Generate text using generateText
-    print('🔄 Generating text...');
-    final result = await client.generateText(
-      prompt: 'Write a haiku about programming',
+    // Example 1: Image generation model
+    print('🎨 === IMAGE GENERATION MODEL ===');
+    final imageClient =
+        GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
+    await imageClient.initialize(apiKey: apiKey);
+
+    // Try using the dedicated generateImage method
+    final testing = await imageClient.generateImage(
+      prompt: 'Generate an image of a cute cat',
       config: const GenerationConfig(
-        temperature: 0.7,
-        maxOutputTokens: 100,
+        temperature: 0.8,
       ),
     );
 
-    print('✅ Result: ${result.text}');
+    print('📝 Response: ${testing.text}');
+    print('🖼️ Has images: ${testing.hasImages}');
+    print('📊 Number of images: ${testing.images.length}');
 
-    // Generate content using generateFromContent
-    print('\n🔄 Generating content from Content objects...');
-    final contentResult = await client.generateFromContent(
-      contents: [
-        TextContent('Explain what machine learning is in simple terms')
-      ],
-      config: const GenerationConfig(
-        temperature: 0.5,
-        maxOutputTokens: 150,
-      ),
-    );
+    if (testing.hasImages && testing.images.isNotEmpty) {
+      final file = File('example/generated_images/cat.png');
+      await file.writeAsBytes(testing.images.first.data);
+      print('🎉 Image saved: ${file.path}');
+      print(
+          '📏 Size: ${(testing.images.first.data.length / 1024 / 1024).toStringAsFixed(1)} MB');
+    } else {
+      print('⚠️ No images were generated');
+    }
 
-    print('✅ Content result: ${contentResult.text}');
+    imageClient.dispose();
   } catch (e) {
     print('❌ Error: $e');
-  } finally {
-    // Always dispose the client
-    client.dispose();
   }
 }

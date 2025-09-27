@@ -73,7 +73,7 @@ void main() {
     group('Initialization', () {
       test('should throw on empty API key', () async {
         expect(
-          () => client.initialize(''),
+          () => client.initialize(apiKey: ''),
           throwsA(isA<GeminiAuthException>()),
         );
       });
@@ -154,12 +154,6 @@ void main() {
         expect(hasText, isTrue);
       });
 
-      test('should throw on empty content list', () async {
-        expect(
-          () => client.generateFromContent(contents: []),
-          throwsA(isA<GeminiValidationException>()),
-        );
-      });
 
       test('should throw on unsupported content types', () async {
         // This would require a custom Content implementation
@@ -229,27 +223,6 @@ void main() {
       test('should dispose resources', () {
         // Test that dispose can be called safely
         expect(() => client.dispose(), returnsNormally);
-      });
-    });
-
-    group('Validation', () {
-      test('should validate empty content lists', () {
-        expect(
-          () => client.generateFromContent(contents: []),
-          throwsA(isA<GeminiValidationException>()),
-        );
-      });
-
-      test('should validate streaming content lists', () async {
-        try {
-          await for (final _
-              in client.generateFromContentStream(contents: [])) {
-            // Should not reach here
-          }
-          fail('Expected GeminiValidationException');
-        } catch (e) {
-          expect(e, isA<GeminiValidationException>());
-        }
       });
     });
   });

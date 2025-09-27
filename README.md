@@ -67,12 +67,11 @@ void main() async {
   await client.initialize('YOUR_API_KEY');
 
   // Combine text and image
-  final contents = [
-    TextContent('Describe this image:'),
-    ImageContent(imageBytes, 'image/jpeg'),
-  ];
-
-  final response = await client.generateFromContent(contents);
+  // Analyze an image with optional prompt
+  final response = await client.analyzeImage(
+    imageData: imageBytes,
+    mimeType: 'image/jpeg',
+  );
   print(response.text);
 }
 ```

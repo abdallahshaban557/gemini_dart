@@ -65,8 +65,8 @@ void main() {
         if (apiKey.isEmpty) return;
 
         final response = await imageHandler.analyzeImage(
-          testImageData,
-          'image/png',
+          imageData: testImageData,
+          mimeType: 'image/png',
           prompt: 'What do you see in this image?',
           config: const GenerationConfig(
             temperature: 0.1,
@@ -84,8 +84,8 @@ void main() {
         if (apiKey.isEmpty) return;
 
         final response = await imageHandler.describeImage(
-          testImageData,
-          'image/png',
+          imageData: testImageData,
+          mimeType: 'image/png',
         );
 
         expect(response.text, isNotNull);
@@ -97,8 +97,8 @@ void main() {
         if (apiKey.isEmpty) return;
 
         final response = await imageHandler.extractTextFromImage(
-          testImageData,
-          'image/png',
+          imageData: testImageData,
+          mimeType: 'image/png',
         );
 
         expect(response.text, isNotNull);
@@ -152,7 +152,7 @@ void main() {
           TextContent('Provide a detailed description.'),
         ];
 
-        final response = await multiModalHandler.generateContent(contents);
+        final response = await multiModalHandler.generateContent(contents: contents);
 
         expect(response.text, isNotNull);
         expect(response.text!.isNotEmpty, isTrue);
@@ -204,7 +204,7 @@ void main() {
 
         final responses = <String>[];
         await for (final response
-            in multiModalHandler.generateContentStream(contents)) {
+            in multiModalHandler.generateContentStream(contents: contents)) {
           if (response.text != null) {
             responses.add(response.text!);
           }
@@ -246,7 +246,7 @@ void main() {
         final invalidImageData = Uint8List.fromList([0x00, 0x01, 0x02]);
 
         expect(
-          () => imageHandler.analyzeImage(invalidImageData, 'image/jpeg'),
+          () => imageHandler.analyzeImage(imageData: invalidImageData, mimeType: 'image/jpeg'),
           throwsA(isA<ArgumentError>()),
         );
       });
@@ -256,7 +256,7 @@ void main() {
         if (apiKey.isEmpty) return;
 
         expect(
-          () => imageHandler.analyzeImage(testImageData, 'image/tiff'),
+          () => imageHandler.analyzeImage(imageData: testImageData, mimeType: 'image/tiff'),
           throwsA(isA<ArgumentError>()),
         );
       });
@@ -266,7 +266,7 @@ void main() {
         if (apiKey.isEmpty) return;
 
         expect(
-          () => multiModalHandler.generateContent([]),
+          () => multiModalHandler.generateContent(contents: []),
           throwsA(isA<Exception>()),
         );
       });
