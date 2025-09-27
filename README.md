@@ -68,7 +68,7 @@ void main() async {
 
   // Combine text and image
   // Analyze an image with optional prompt
-  final response = await client.analyzeImage(
+  final response = await client.imageHandler.analyzeImage(
     imageData: imageBytes,
     mimeType: 'image/jpeg',
   );

@@ -70,7 +70,6 @@ class TextOnlyModel extends ModelInterface {
     yield* client.textHandler.generateContentStream(
         prompt: prompt, config: config, context: context);
   }
-
 }
 
 /// Interface for models that can generate images
@@ -106,7 +105,6 @@ class ImageGenerationModel extends ModelInterface {
     return client.generateImage(
         prompt: prompt, config: config, context: context);
   }
-
 }
 
 /// Interface for models that can analyze images and videos
@@ -141,7 +139,7 @@ class MultiModalModel extends ModelInterface {
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
-    return client.analyzeImage(
+    return client.imageHandler.analyzeImage(
       imageData: imageData,
       mimeType: mimeType,
       prompt: prompt,
@@ -169,7 +167,6 @@ class MultiModalModel extends ModelInterface {
       context: context,
     );
   }
-
 
   /// Create a multi-modal prompt with text, images, and videos
   Future<GeminiResponse> createMultiModalPrompt({

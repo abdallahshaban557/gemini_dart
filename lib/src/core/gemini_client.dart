@@ -133,7 +133,6 @@ class GeminiClient {
         .generateContent(prompt: prompt, config: config, context: context);
   }
 
-
   /// Generate streaming text from a text prompt
   ///
   /// Returns a stream of partial responses for real-time text generation.
@@ -143,28 +142,6 @@ class GeminiClient {
   }) async* {
     _ensureInitialized();
     yield* _textHandler!.generateContentStream(prompt: prompt, config: config);
-  }
-
-
-  /// Analyze an image with optional text prompt
-  ///
-  /// Convenience method for image analysis. For more advanced image operations,
-  /// use the [imageHandler] directly.
-  Future<GeminiResponse> analyzeImage({
-    required Uint8List imageData,
-    required String mimeType,
-    String? prompt,
-    GenerationConfig? config,
-    ConversationContext? context,
-  }) async {
-    _ensureInitialized();
-    return _imageHandler!.analyzeImage(
-      imageData: imageData,
-      mimeType: mimeType,
-      prompt: prompt,
-      config: config,
-      context: context,
-    );
   }
 
   /// Generate an image from a text prompt
