@@ -19,29 +19,23 @@ void main() async {
         GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
     await imageClient.initialize(apiKey: apiKey);
 
-    // Try using the dedicated generateImage method
-    final testing = await imageClient.generateImage(
-      prompt: 'Generate an image of a cute cat',
+    final testing = await imageClient.createMultiModalPrompt(
+      text: 'Generate an image of a cute cat',
+      images: [
+        (
+          data: File('example/generated_images/cat.png').readAsBytesSync(),
+          mimeType: 'image/png'
+        ),
+      ],
       config: const GenerationConfig(
         temperature: 0.8,
       ),
     );
 
-    print('📝 Response: ${testing.text}');
-    print('🖼️ Has images: ${testing.hasImages}');
-    print('📊 Number of images: ${testing.images.length}');
+    print('📝 Response: ${testing.images.first.data}');
 
-    if (testing.hasImages && testing.images.isNotEmpty) {
-      final file = File('example/generated_images/cat.png');
-      await file.writeAsBytes(testing.images.first.data);
-      print('🎉 Image saved: ${file.path}');
-      print(
-          '📏 Size: ${(testing.images.first.data.length / 1024 / 1024).toStringAsFixed(1)} MB');
-    } else {
-      print('⚠️ No images were generated');
-    }
-
-    imageClient.dispose();
+    //stop here
+    exit(1);
   } catch (e) {
     print('❌ Error: $e');
   }
