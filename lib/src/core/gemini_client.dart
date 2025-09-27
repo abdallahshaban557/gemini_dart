@@ -7,7 +7,9 @@ import '../handlers/multimodal_handler.dart';
 import '../handlers/text_handler.dart';
 import '../models/content.dart';
 import '../models/gemini_config.dart';
+import '../models/gemini_models.dart';
 import '../models/generation_config.dart';
+import '../models/model_interface.dart';
 import '../models/response.dart';
 import '../services/http_service.dart';
 import 'auth.dart';
@@ -20,13 +22,23 @@ import 'retry_config.dart';
 /// content generation using the Gemini API. It integrates all handlers and
 /// services to provide a simple, high-level API for developers.
 class GeminiClient {
-  /// Creates a new GeminiClient with optional configuration
+  /// Creates a new GeminiClient with optional configuration and model
+  ///
+  /// Example:
+  /// ```dart
+  /// final client = GeminiClient(model: GeminiModels.gemini15Flash);
+  /// await client.initialize(apiKey);
+  /// final response = await client.generateText(prompt: "Hello");
+  /// ```
   GeminiClient({
+    String? model,
     GeminiConfig? config,
     RetryConfig? retryConfig,
-  }) : _config = config ?? const GeminiConfig() {
+  })  : _config = config ?? const GeminiConfig(),
+        _selectedModel = model {
     _initializeServices(retryConfig);
   }
+
   HttpService? _httpService;
   AuthenticationHandler? _auth;
   TextHandler? _textHandler;
@@ -34,6 +46,7 @@ class GeminiClient {
   MultiModalHandler? _multiModalHandler;
 
   GeminiConfig _config;
+  String? _selectedModel;
   bool _initialized = false;
 
   /// Initialize all internal services
@@ -53,7 +66,10 @@ class GeminiClient {
   ///
   /// This must be called before using any generation methods.
   /// The API key will be validated and stored for subsequent requests.
-  Future<void> initialize(String apiKey, {GeminiConfig? config}) async {
+  Future<void> initialize({
+    required String apiKey,
+    GeminiConfig? config,
+  }) async {
     if (apiKey.isEmpty) {
       throw const GeminiAuthException('API key cannot be empty');
     }
@@ -84,60 +100,39 @@ class GeminiClient {
 
   /// Generate text from a simple text prompt
   ///
-  /// This is the most basic method for text generation.
-  /// For more advanced use cases, use [generateFromContent] or the handler methods.
+  /// Uses the selected model for generation. If no model is selected, uses default text model.
   Future<GeminiResponse> generateText({
     required String prompt,
-    GenerationConfig? config,
-  }) async {
-    _ensureInitialized();
-    return _textHandler!.generateContent(prompt, config: config);
-  }
-
-  /// Generate content from a list of content objects
-  ///
-  /// This method supports multi-modal content including text, images, and videos.
-  /// It automatically routes to the appropriate handler based on content types.
-  Future<GeminiResponse> generateFromContent({
-    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
     _ensureInitialized();
 
-    if (contents.isEmpty) {
-      throw const GeminiValidationException(
-        'Contents cannot be empty',
-        {'contents': 'At least one content item is required'},
-      );
+    if (_selectedModel != null) {
+      // Use the selected model with appropriate handler
+      final modelType = GeminiModels.modelTypes[_selectedModel];
+      switch (modelType) {
+        case ModelType.imageGeneration:
+          // For image generation models, generateText should only generate text
+          return _textHandler!.generateContent(
+              prompt: prompt, config: config, context: context);
+        case ModelType.multiModal:
+          return _multiModalHandler!.generateContent(
+              contents: [TextContent(prompt)],
+              config: config,
+              context: context);
+        case ModelType.textOnly:
+        case null:
+          return _textHandler!.generateContent(
+              prompt: prompt, config: config, context: context);
+      }
     }
 
-    // Determine which handler to use based on content types
-    final hasImages = contents.any((c) => c is ImageContent);
-    final hasVideos = contents.any((c) => c is VideoContent);
-    final hasText = contents.any((c) => c is TextContent);
-
-    if (hasImages || hasVideos) {
-      // Use multi-modal handler for mixed content
-      return _multiModalHandler!.generateContent(
-        contents,
-        config: config,
-        context: context,
-      );
-    } else if (hasText) {
-      // Use text handler for text-only content
-      return _textHandler!.generateFromContent(
-        contents: contents,
-        config: config,
-        context: context,
-      );
-    } else {
-      throw const GeminiValidationException(
-        'Unsupported content types',
-        {'contents': 'No supported content types found'},
-      );
-    }
+    // Fallback to default text handler
+    return _textHandler!
+        .generateContent(prompt: prompt, config: config, context: context);
   }
+
 
   /// Generate streaming text from a text prompt
   ///
@@ -147,66 +142,25 @@ class GeminiClient {
     GenerationConfig? config,
   }) async* {
     _ensureInitialized();
-    yield* _textHandler!.generateContentStream(prompt, config: config);
+    yield* _textHandler!.generateContentStream(prompt: prompt, config: config);
   }
 
-  /// Generate streaming content from a list of content objects
-  Stream<GeminiResponse> generateFromContentStream({
-    required List<Content> contents,
-    GenerationConfig? config,
-    ConversationContext? context,
-  }) async* {
-    _ensureInitialized();
-
-    if (contents.isEmpty) {
-      throw const GeminiValidationException(
-        'Contents cannot be empty',
-        {'contents': 'At least one content item is required'},
-      );
-    }
-
-    // Determine which handler to use based on content types
-    final hasImages = contents.any((c) => c is ImageContent);
-    final hasVideos = contents.any((c) => c is VideoContent);
-    final hasText = contents.any((c) => c is TextContent);
-
-    if (hasImages || hasVideos) {
-      // Use multi-modal handler for mixed content
-      yield* _multiModalHandler!.generateContentStream(
-        contents,
-        config: config,
-        context: context,
-      );
-    } else if (hasText) {
-      // Use text handler for text-only content
-      yield* _textHandler!.generateFromContentStream(
-        contents: contents,
-        config: config,
-        context: context,
-      );
-    } else {
-      throw const GeminiValidationException(
-        'Unsupported content types',
-        {'contents': 'No supported content types found'},
-      );
-    }
-  }
 
   /// Analyze an image with optional text prompt
   ///
   /// Convenience method for image analysis. For more advanced image operations,
   /// use the [imageHandler] directly.
-  Future<GeminiResponse> analyzeImage(
-    Uint8List imageData,
-    String mimeType, {
+  Future<GeminiResponse> analyzeImage({
+    required Uint8List imageData,
+    required String mimeType,
     String? prompt,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
     _ensureInitialized();
     return _imageHandler!.analyzeImage(
-      imageData,
-      mimeType,
+      imageData: imageData,
+      mimeType: mimeType,
       prompt: prompt,
       config: config,
       context: context,
@@ -221,13 +175,13 @@ class GeminiClient {
   ///
   /// Example:
   /// ```dart
-  /// final response = await client.generateImage('A sunset over mountains');
+  /// final response = await client.generateImage(prompt: 'A sunset over mountains');
   /// print(response.text); // Text description
   /// final imageData = response.candidates.first.content.parts
   ///     .whereType<ImagePart>().first.data; // Image bytes
   /// ```
-  Future<GeminiResponse> generateImage(
-    String prompt, {
+  Future<GeminiResponse> generateImage({
+    required String prompt,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -271,65 +225,6 @@ class GeminiClient {
     }
   }
 
-  /// Generate an image with advanced options
-  ///
-  /// This method provides more control over image generation including
-  /// aspect ratio, style, and other parameters.
-  Future<GeminiResponse> generateImageAdvanced(
-    String prompt, {
-    String? aspectRatio, // e.g., "1:1", "16:9", "9:16"
-    String? style, // e.g., "photographic", "digital_art", "sketch"
-    int? seed, // For reproducible results
-    GenerationConfig? config,
-    ConversationContext? context,
-  }) async {
-    _ensureInitialized();
-
-    try {
-      final requestBody = {
-        'contents': [
-          {
-            'parts': [
-              {'text': prompt}
-            ]
-          }
-        ],
-        'generationConfig': {
-          ...?config?.toJson(),
-          if (aspectRatio != null) 'aspectRatio': aspectRatio,
-          if (style != null) 'style': style,
-          if (seed != null) 'seed': seed,
-        },
-      };
-
-      // Use v1beta API version for image generation
-      final imageGenService = HttpService(
-        auth: _auth!,
-        config: _config.copyWith(apiVersion: ApiVersion.v1beta),
-      );
-
-      final response = await imageGenService.post(
-        'models/gemini-2.5-flash-image-preview:generateContent',
-        body: requestBody,
-      );
-
-      final geminiResponse = GeminiResponse.fromJson(response);
-
-      // Add to conversation context if provided
-      if (context != null) {
-        context.addUserMessage(prompt);
-        context.addModelResponse(geminiResponse);
-      }
-
-      return geminiResponse;
-    } catch (e) {
-      throw GeminiNetworkException(
-        'Failed to generate image: ${e.toString()}',
-        originalError: e,
-      );
-    }
-  }
-
   /// Create a multi-modal prompt with text, images, and videos
   ///
   /// This is a convenience method for creating complex multi-modal requests.
@@ -354,8 +249,8 @@ class GeminiClient {
   ///
   /// This method uploads large files (typically videos) to the Gemini API
   /// and returns a file URI that can be used in VideoContent objects.
-  Future<FileUploadResponse> uploadFile(
-    File file, {
+  Future<FileUploadResponse> uploadFile({
+    required File file,
     String? mimeType,
   }) async {
     _ensureInitialized();
@@ -440,6 +335,68 @@ class GeminiClient {
 
   /// Check if the client is initialized and ready to use
   bool get isInitialized => _initialized;
+
+  /// Get the currently selected model name
+  String? get selectedModel => _selectedModel;
+
+  /// Check if the selected model supports image generation
+  bool get supportsImageGeneration {
+    if (_selectedModel == null) return false;
+    final modelType = GeminiModels.modelTypes[_selectedModel];
+    return modelType == ModelType.imageGeneration;
+  }
+
+  /// Check if the selected model supports image analysis
+  bool get supportsImageAnalysis {
+    if (_selectedModel == null) return false;
+    final modelType = GeminiModels.modelTypes[_selectedModel];
+    return modelType == ModelType.multiModal ||
+        modelType == ModelType.imageGeneration;
+  }
+
+  /// Check if the selected model supports video analysis
+  bool get supportsVideoAnalysis {
+    if (_selectedModel == null) return false;
+    final modelType = GeminiModels.modelTypes[_selectedModel];
+    return modelType == ModelType.multiModal;
+  }
+
+  /// Select a specific model and get its strongly-typed interface
+  ///
+  /// Example:
+  /// ```dart
+  /// final model = await client.selectModel(modelName: GeminiModels.gemini25FlashImagePreview);
+  /// // Now you have access to image generation methods!
+  /// final response = await model.generateImage(prompt: "A sunset");
+  /// ```
+  Future<ModelInterface> selectModel({required String modelName}) async {
+    _ensureInitialized();
+
+    // Validate the model exists
+    final models = await getModels();
+    models.firstWhere(
+      (m) => m.name == modelName,
+      orElse: () => throw ArgumentError('Model $modelName not found'),
+    );
+
+    // Return the appropriate model interface
+    return _createModelInterface(modelName);
+  }
+
+  /// Create the appropriate model interface based on model name
+  ModelInterface _createModelInterface(String modelName) {
+    final modelType = GeminiModels.modelTypes[modelName];
+
+    switch (modelType) {
+      case ModelType.imageGeneration:
+        return ImageGenerationModel(modelName, this);
+      case ModelType.multiModal:
+        return MultiModalModel(modelName, this);
+      case ModelType.textOnly:
+      case null:
+        return TextOnlyModel(modelName, this);
+    }
+  }
 
   /// Dispose of resources and close connections
   void dispose() {

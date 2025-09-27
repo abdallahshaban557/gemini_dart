@@ -48,7 +48,7 @@ void main() {
         )).thenAnswer((_) async => expectedResponse);
 
         // Act
-        final result = await textHandler.generateContent(prompt);
+        final result = await textHandler.generateContent(prompt: prompt);
 
         // Assert
         expect(result.text, equals('Hello! How can I help you today?'));
@@ -66,11 +66,11 @@ void main() {
       test('should throw validation exception for empty prompt', () async {
         // Act & Assert
         expect(
-          () => textHandler.generateContent(''),
+          () => textHandler.generateContent(prompt: ''),
           throwsA(isA<GeminiValidationException>()),
         );
         expect(
-          () => textHandler.generateContent('   '),
+          () => textHandler.generateContent(prompt: '   '),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -98,7 +98,7 @@ void main() {
         )).thenAnswer((_) async => expectedResponse);
 
         // Act
-        await textHandler.generateContent(prompt, config: config);
+        await textHandler.generateContent(prompt: prompt, config: config);
 
         // Assert
         verify(mockHttpService.post(
@@ -150,7 +150,7 @@ void main() {
 
         // Act
         final result = await textHandler.generateContent(
-          prompt,
+          prompt: prompt,
           context: context,
         );
 
@@ -255,7 +255,7 @@ void main() {
         // Act
         final results = <GeminiResponse>[];
         await for (final response
-            in textHandler.generateContentStream(prompt)) {
+            in textHandler.generateContentStream(prompt: prompt)) {
           results.add(response);
         }
 
@@ -268,7 +268,7 @@ void main() {
       test('should throw validation exception for empty prompt', () async {
         // Act & Assert
         expect(
-          () => textHandler.generateContentStream('').toList(),
+          () => textHandler.generateContentStream(prompt: '').toList(),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -300,7 +300,7 @@ void main() {
         // Act
         final results = <GeminiResponse>[];
         await for (final response in textHandler.generateContentStream(
-          prompt,
+          prompt: prompt,
           context: context,
         )) {
           results.add(response);
@@ -336,7 +336,7 @@ void main() {
         )).thenAnswer((_) async => expectedResponse);
 
         // Act
-        final result = await textHandler.generateWithContext(context, prompt);
+        final result = await textHandler.generateWithContext(context: context, prompt: prompt);
 
         // Assert
         expect(result.text, equals('Context response'));

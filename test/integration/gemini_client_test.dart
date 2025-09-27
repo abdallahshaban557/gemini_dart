@@ -34,13 +34,13 @@ void main() {
           return;
         }
 
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
         expect(client.isInitialized, isTrue);
       });
 
       test('should throw exception with empty API key', () async {
         expect(
-          () => client.initialize(''),
+          () => client.initialize(apiKey: ''),
           throwsA(isA<GeminiAuthException>()),
         );
       });
@@ -63,7 +63,7 @@ void main() {
           enableLogging: true,
         );
 
-        await client.initialize(testApiKey, config: customConfig);
+        await client.initialize(apiKey: testApiKey, config: customConfig);
         expect(client.isInitialized, isTrue);
         expect(client.config.timeout, equals(const Duration(seconds: 60)));
         expect(client.config.enableLogging, isTrue);
@@ -76,7 +76,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should generate content from simple text prompt', () async {
@@ -151,7 +151,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should generate content from mixed content types', () async {
@@ -173,29 +173,19 @@ void main() {
           0xAE, 0x42, 0x60, 0x82,
         ]);
 
-        final contents = [
-          TextContent('Describe this image:'),
-          ImageContent(imageData, 'image/png'),
-        ];
-
-        final response = await client.generateFromContent(contents: contents);
+        final response = await client.analyzeImage(
+          imageData: imageData,
+          mimeType: 'image/png',
+          config: const GenerationConfig(
+            temperature: 0.7,
+          ),
+        );
 
         expect(response, isNotNull);
         expect(response.candidates, isNotEmpty);
         expect(response.text, isNotNull);
       });
 
-      test('should handle empty content list', () async {
-        // Skip if no real API key available
-        if (testApiKey == 'test-api-key') {
-          return;
-        }
-
-        expect(
-          () => client.generateFromContent(contents: []),
-          throwsA(isA<GeminiValidationException>()),
-        );
-      });
     });
 
     group('Image Analysis', () {
@@ -204,7 +194,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should analyze image with prompt', () async {
@@ -286,8 +276,8 @@ void main() {
         ]);
 
         final response = await client.analyzeImage(
-          imageData,
-          'image/png',
+          imageData: imageData,
+          mimeType: 'image/png',
           prompt: 'What do you see in this image?',
         );
 
@@ -303,7 +293,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should create multi-modal prompt with text and images', () async {
@@ -403,7 +393,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should maintain conversation context', () async {
@@ -415,8 +405,8 @@ void main() {
         final context = client.createConversationContext();
 
         // First message
-        final response1 = await client.generateFromContent(
-          contents: [TextContent('My name is Alice')],
+        final response1 = await client.generateText(
+          prompt: 'My name is Alice',
           context: context,
         );
 
@@ -424,8 +414,8 @@ void main() {
         expect(context.length, equals(2)); // User + Assistant
 
         // Second message referencing first
-        final response2 = await client.generateFromContent(
-          contents: [TextContent('What is my name?')],
+        final response2 = await client.generateText(
+          prompt: 'What is my name?',
           context: context,
         );
 
@@ -473,7 +463,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should provide access to text handler', () {
@@ -509,7 +499,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should get available models', () async {
@@ -530,24 +520,11 @@ void main() {
       test('should handle network errors gracefully', () async {
         // Use invalid API key to trigger auth error
         expect(
-          () => client.initialize('invalid-key'),
+          () => client.initialize(apiKey: 'invalid-key'),
           throwsA(isA<GeminiAuthException>()),
         );
       });
 
-      test('should handle validation errors', () async {
-        // Skip if no real API key available
-        if (testApiKey == 'test-api-key') {
-          return;
-        }
-
-        await client.initialize(testApiKey);
-
-        expect(
-          () => client.generateFromContent(contents: []),
-          throwsA(isA<GeminiValidationException>()),
-        );
-      });
     });
 
     group('Resource Management', () {

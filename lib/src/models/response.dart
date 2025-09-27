@@ -32,8 +32,13 @@ class GeminiResponse {
 
     // Extract text from first candidate if available
     String? text;
-    if (candidates.isNotEmpty && candidates.first.content is TextContent) {
-      text = (candidates.first.content as TextContent).text;
+    if (candidates.isNotEmpty) {
+      final content = candidates.first.content;
+      if (content is TextContent) {
+        text = content.text;
+      } else if (content is MultiPartContent) {
+        text = content.text;
+      }
     }
 
     return GeminiResponse(
@@ -73,6 +78,40 @@ class GeminiResponse {
   @override
   int get hashCode =>
       Object.hash(text, candidates, promptFeedback, usageMetadata);
+
+  /// Get the first generated image if available
+  ImageContent? get firstImage {
+    if (candidates.isEmpty) return null;
+    final content = candidates.first.content;
+    if (content is MultiPartContent) {
+      return content.firstImage;
+    } else if (content is ImageContent) {
+      return content;
+    }
+    return null;
+  }
+
+  /// Get all generated images
+  List<ImageContent> get images {
+    final allImages = <ImageContent>[];
+    for (final candidate in candidates) {
+      final content = candidate.content;
+      if (content is MultiPartContent) {
+        allImages.addAll(content.images);
+      } else if (content is ImageContent) {
+        allImages.add(content);
+      }
+    }
+    return allImages;
+  }
+
+  /// Check if this response contains generated images
+  bool get hasImages {
+    return candidates.any((candidate) {
+      final content = candidate.content;
+      return content is MultiPartContent || content is ImageContent;
+    });
+  }
 
   @override
   String toString() =>

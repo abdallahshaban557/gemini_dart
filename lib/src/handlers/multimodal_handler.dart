@@ -22,8 +22,8 @@ class MultiModalHandler {
   final String _model;
 
   /// Generate content from mixed content types
-  Future<GeminiResponse> generateContent(
-    List<Content> contents, {
+  Future<GeminiResponse> generateContent({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -70,8 +70,8 @@ class MultiModalHandler {
   }
 
   /// Generate streaming content from mixed content types
-  Stream<GeminiResponse> generateContentStream(
-    List<Content> contents, {
+  Stream<GeminiResponse> generateContentStream({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async* {
@@ -155,7 +155,8 @@ class MultiModalHandler {
       );
     }
 
-    return generateContent(contents, config: config, context: context);
+    return generateContent(
+        contents: contents, config: config, context: context);
   }
 
   /// Analyze multiple media types together
@@ -190,7 +191,8 @@ class MultiModalHandler {
       );
     }
 
-    return generateContent(contents, config: config, context: context);
+    return generateContent(
+        contents: contents, config: config, context: context);
   }
 
   /// Create a conversation with mixed media

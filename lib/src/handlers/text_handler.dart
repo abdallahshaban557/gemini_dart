@@ -20,8 +20,8 @@ class TextHandler {
         _model = model;
 
   /// Generate content from a simple text prompt
-  Future<GeminiResponse> generateContent(
-    String prompt, {
+  Future<GeminiResponse> generateContent({
+    required String prompt,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -82,8 +82,8 @@ class TextHandler {
   }
 
   /// Generate streaming content from a text prompt
-  Stream<GeminiResponse> generateContentStream(
-    String prompt, {
+  Stream<GeminiResponse> generateContentStream({
+    required String prompt,
     GenerationConfig? config,
     ConversationContext? context,
   }) async* {
@@ -178,9 +178,9 @@ class TextHandler {
   }
 
   /// Generate content with conversation context
-  Future<GeminiResponse> generateWithContext(
-    ConversationContext context,
-    String prompt, {
+  Future<GeminiResponse> generateWithContext({
+    required ConversationContext context,
+    required String prompt,
     GenerationConfig? config,
   }) async {
     if (prompt.trim().isEmpty) {
