@@ -11,7 +11,7 @@ abstract class SecureStorageInterface {
 }
 
 /// Basic secure storage implementation
-/// Note: In production, consider using flutter_secure_storage for mobile apps
+/// Note: In production, consider using platform-specific secure storage solutions
 class SecureStorage implements SecureStorageInterface {
   SecureStorage({String? customPath}) {
     if (customPath != null) {

@@ -1,6 +1,6 @@
 # Usage Guide
 
-This guide shows you how to use the Gemini Dart package to integrate Google's Gemini AI models into your Dart or Flutter applications.
+This guide shows you how to use the Gemini Dart package to integrate Google's Gemini AI models into your Dart applications.
 
 ## Installation
 
@@ -15,8 +15,6 @@ Then run:
 
 ```bash
 dart pub get
-# or for Flutter
-flutter pub get
 ```
 
 ## Getting Started

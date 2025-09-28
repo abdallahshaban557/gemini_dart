@@ -5,7 +5,7 @@ A comprehensive Dart package for integrating Google's Gemini AI models with supp
 ## Features
 
 - 🤖 **Multi-modal AI Integration**: Support for text, image, and video inputs
-- 📱 **Flutter Widgets**: Pre-built widgets for easy Flutter integration
+- 🔧 **Easy Integration**: Simple API for Dart applications
 - 🔄 **Streaming Responses**: Real-time text generation with streaming support
 - 🛡️ **Type Safety**: Strongly typed models and responses
 - 🔧 **Configurable**: Extensive configuration options for different use cases
@@ -18,15 +18,6 @@ Add this package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  gemini_dart: ^0.1.0
-```
-
-For Flutter-specific features, also add:
-
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
   gemini_dart: ^0.1.0
 ```
 
@@ -76,25 +67,29 @@ void main() async {
 }
 ```
 
-### Flutter Integration
+### Advanced Usage
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:gemini_dart/flutter_gemini.dart';
+import 'package:gemini_dart/gemini_dart.dart';
 
-class ChatScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Gemini Chat')),
-      body: GeminiChat(
-        apiKey: 'YOUR_API_KEY',
-        onResponse: (response) {
-          print('Received: ${response.text}');
-        },
-      ),
-    );
-  }
+void main() async {
+  final client = GeminiClient();
+  await client.initialize('YOUR_API_KEY');
+
+  // Advanced configuration
+  final config = GenerationConfig(
+    temperature: 0.7,
+    maxOutputTokens: 1000,
+    topP: 0.9,
+  );
+
+  final response = await client.generateText(
+    prompt: 'Write a creative story',
+    config: config,
+  );
+
+  print(response.text);
+  client.dispose();
 }
 ```
 
@@ -165,19 +160,19 @@ try {
 }
 ```
 
-## Flutter Widgets
+## Advanced Features
 
-### GeminiChat
+### Streaming Responses
 
-A complete chat interface with message history and typing indicators.
+Get real-time text generation with streaming support.
 
-### MediaPicker
+### File Processing
 
-Easy media selection for images and videos.
+Handle images and videos with automatic format detection and optimization.
 
-### ResponseViewer
+### Conversation Context
 
-Formatted display of AI responses with syntax highlighting.
+Maintain conversation history for multi-turn interactions.
 
 ## Examples
 
@@ -185,7 +180,7 @@ Check out the `/example` directory for complete examples:
 
 - Basic text generation
 - Multi-modal content processing
-- Flutter chat application
+- Image generation and analysis
 - Video analysis workflow
 
 ## API Reference
@@ -195,7 +190,6 @@ For detailed API documentation, visit [pub.dev documentation](https://pub.dev/do
 ## Requirements
 
 - Dart SDK: >=3.0.0 <4.0.0
-- Flutter: >=3.10.0 (for Flutter features)
 - Google AI API key
 
 ## Getting an API Key

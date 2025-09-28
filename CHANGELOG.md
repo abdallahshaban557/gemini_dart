@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial release of Gemini Dart package
 - Multi-modal AI integration support
 - Text, image, and video content processing
-- Flutter widgets for easy integration
+- Easy integration with Dart applications
 - Streaming response capabilities
 - Comprehensive error handling
 - Type-safe models and responses
@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GeminiResponse` - Structured response handling
 - `GeminiConfig` - Comprehensive configuration options
 - `GenerationConfig` - AI model parameter tuning
-- Flutter widgets: `GeminiChat`, `MediaPicker`, `ResponseViewer`
+- Advanced file processing and content analysis
 - Automatic retry mechanisms with exponential backoff
 - File upload progress tracking
 - Response caching system
@@ -52,12 +52,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `http: ^1.1.0` - HTTP client for API communication
 - `meta: ^1.9.1` - Metadata annotations
-- `flutter` - Flutter framework support
+- `dart:io` - File system operations
 
 ### Development Dependencies
 
-- `flutter_test` - Testing framework
-- `flutter_lints: ^3.0.0` - Linting rules
+- `test: ^1.24.0` - Testing framework
+- `lints: ^3.0.0` - Linting rules
 - `mockito: ^5.4.2` - Mocking for tests
 - `build_runner: ^2.4.7` - Code generation
 
@@ -66,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive README with examples
 - API documentation with dartdoc comments
 - Getting started guide
-- Flutter integration examples
+- Dart integration examples
 - Error handling documentation
 - Configuration reference
 
@@ -82,7 +82,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Requirements
 
 - Dart SDK: >=3.0.0 <4.0.0
-- Flutter: >=3.10.0 (for Flutter features)
 - Google AI API key required
 
 ---
