@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -117,21 +118,25 @@ class GeminiClient {
     yield* _textHandler!.generateContentStream(prompt: prompt, config: config);
   }
 
-  /// Generate an image from a text prompt
+  /// Generate an image from a text prompt with optional input images
   ///
   /// This method uses Gemini's image generation capabilities to create images
-  /// from text descriptions. The response will contain both a text description
-  /// and the generated image data.
+  /// from text descriptions, optionally using input images as reference.
   ///
-  /// Example:
+  /// Examples:
   /// ```dart
+  /// // Text-only image generation
   /// final response = await client.generateImage(prompt: 'A sunset over mountains');
-  /// print(response.text); // Text description
-  /// final imageData = response.candidates.first.content.parts
-  ///     .whereType<ImagePart>().first.data; // Image bytes
+  ///
+  /// // Image-to-image generation with reference
+  /// final response = await client.generateImage(
+  ///   prompt: 'Make this image more colorful',
+  ///   images: [(data: imageBytes, mimeType: 'image/png')],
+  /// );
   /// ```
   Future<GeminiResponse> generateImage({
     required String prompt,
+    List<({Uint8List data, String mimeType})>? images,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -144,14 +149,29 @@ class GeminiClient {
         config: _config.copyWith(apiVersion: ApiVersion.v1beta),
       );
 
+      // Build the content parts (text + optional images)
+      final parts = <Map<String, dynamic>>[
+        {'text': prompt},
+      ];
+
+      // Add images if provided
+      if (images != null) {
+        for (final image in images) {
+          parts.add({
+            'inline_data': {
+              'mime_type': image.mimeType,
+              'data': base64Encode(image.data),
+            }
+          });
+        }
+      }
+
       final response = await imageGenService.post(
         'models/gemini-2.5-flash-image-preview:generateContent',
         body: {
           'contents': [
             {
-              'parts': [
-                {'text': prompt}
-              ]
+              'parts': parts,
             }
           ],
           if (config != null) 'generationConfig': config.toJson(),
