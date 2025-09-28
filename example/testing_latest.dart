@@ -19,8 +19,9 @@ void main() async {
         GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
     await imageClient.initialize(apiKey: apiKey);
 
-    final testing = await imageClient.createMultiModalPrompt(
-      text: 'Generate an image of a cute cat',
+    final testing = await imageClient.generateImage(
+      prompt:
+          'Create a variation of this cat with magical sparkles and rainbow colors',
       images: [
         (
           data: File('example/generated_images/cat.png').readAsBytesSync(),
@@ -32,7 +33,18 @@ void main() async {
       ),
     );
 
-    print('📝 Response: ${testing.images.first.data}');
+    print('📝 Response text: ${testing.text}');
+    print('📊 Number of images: ${testing.images.length}');
+
+    if (testing.images.isNotEmpty) {
+      print('🖼️ First image size: ${testing.images.first.data.length} bytes');
+      // Save the image
+      final file = File('example/generated_images/testing_latest_output.png');
+      await file.writeAsBytes(testing.images.first.data);
+      print('💾 Image saved to: ${file.path}');
+    } else {
+      print('⚠️ No images found in response');
+    }
 
     //stop here
     exit(1);
