@@ -267,7 +267,7 @@ class GeminiClient {
     }
   }
 
-  /// Create a multi-modal prompt with text, images, and videos
+  /// Create a multi-modal prompt with text and files
   ///
   /// This is a convenience method for creating complex multi-modal requests.
   ///
@@ -278,7 +278,7 @@ class GeminiClient {
   ///   text: 'Explain quantum physics',
   /// );
   ///
-  /// // Text with files (recommended)
+  /// // Text with files
   /// final imageFile = await GeminiFile.fromFile(File('image.png'));
   /// final videoFile = await GeminiFile.fromFile(File('video.mp4'));
   /// final response = await client.createMultiModalPrompt(
@@ -286,18 +286,20 @@ class GeminiClient {
   ///   files: [imageFile, videoFile],
   /// );
   ///
-  /// // Legacy raw format (still supported)
+  /// // Multiple file types
+  /// final files = [
+  ///   await GeminiFile.fromFile(File('document.pdf')),
+  ///   await GeminiFile.fromFile(File('audio.mp3')),
+  ///   await GeminiFile.fromFile(File('image.jpg')),
+  /// ];
   /// final response = await client.createMultiModalPrompt(
-  ///   text: 'Describe this',
-  ///   images: [(data: imageBytes, mimeType: 'image/png')],
-  ///   videos: [(fileUri: 'gs://bucket/video.mp4', mimeType: 'video/mp4')],
+  ///   text: 'Analyze all these files together',
+  ///   files: files,
   /// );
   /// ```
   Future<GeminiResponse> createMultiModalPrompt({
     String? text,
     List<GeminiFile>? files,
-    List<({Uint8List data, String mimeType})>? images,
-    List<({String fileUri, String mimeType})>? videos,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -308,8 +310,6 @@ class GeminiClient {
     return _multiModalHandler!.createPrompt(
       text: text,
       files: files,
-      images: images,
-      videos: videos,
       config: config,
       context: context,
     );

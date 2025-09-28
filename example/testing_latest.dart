@@ -25,8 +25,8 @@ void main() async {
     );
     print('✅ Text-only response: ${textOnlyResponse.text}');
 
-    // Test 2: New consolidated files API (recommended)
-    print('\n2️⃣ Testing with GeminiFile (new consolidated API)...');
+    // Test 2: Files API with single image
+    print('\n2️⃣ Testing with single GeminiFile...');
 
     // Check if we have an existing image to analyze
     final imageFile = File('example/generated_images/sunset.png');
@@ -35,25 +35,39 @@ void main() async {
 
       final fileResponse = await client.createMultiModalPrompt(
         text: 'Describe what you see in this image in detail',
-        files: [geminiFile], // ✅ New consolidated API!
+        files: [geminiFile],
       );
-      print('✅ File analysis response: ${fileResponse.text}');
+      print(
+          '✅ Single file analysis: ${fileResponse.text?.substring(0, 100)}...');
     } else {
       print('⚠️ Skipping file test - no image found at ${imageFile.path}');
     }
 
-    // Test 3: Legacy API still works (backward compatibility)
-    print('\n3️⃣ Testing legacy images parameter (backward compatibility)...');
-    if (await imageFile.exists()) {
-      final imageBytes = await imageFile.readAsBytes();
+    // Test 3: Multiple files (if available)
+    print('\n3️⃣ Testing with multiple files...');
+    final files = <GeminiFile>[];
 
-      final legacyResponse = await client.createMultiModalPrompt(
-        text: 'What colors dominate this image?',
-        images: [(data: imageBytes, mimeType: 'image/png')], // Legacy API
+    // Try to add multiple image files if they exist
+    for (final fileName in [
+      'sunset.png',
+      'testing_latest_output.png',
+      'cat.png'
+    ]) {
+      final file = File('example/generated_images/$fileName');
+      if (await file.exists()) {
+        files.add(await GeminiFile.fromFile(file));
+      }
+    }
+
+    if (files.isNotEmpty) {
+      final multiFileResponse = await client.createMultiModalPrompt(
+        text: 'Compare and describe the differences between these images',
+        files: files,
       );
-      print('✅ Legacy API response: ${legacyResponse.text}');
+      print('✅ Multi-file analysis: Found ${files.length} files');
+      print('Response: ${multiFileResponse.text?.substring(0, 150)}...');
     } else {
-      print('⚠️ Skipping legacy test - no image found');
+      print('⚠️ Skipping multi-file test - no images found');
     }
 
     // Test 4: Empty call (should fail)
@@ -65,10 +79,10 @@ void main() async {
       print('✅ Correctly caught error: $e');
     }
 
-    print('\n🎉 === API CONSOLIDATION SUCCESSFUL ===');
-    print('✅ New files parameter works');
-    print('✅ Legacy images/videos parameters still work');
-    print('✅ Consistent API with generateImage method');
+    print('\n🎉 === CLEAN API SUCCESSFUL ===');
+    print('✅ Clean files parameter works');
+    print('✅ No legacy parameters - simple and consistent');
+    print('✅ Fully consistent API with generateImage method');
   } catch (e) {
     print('❌ Error: $e');
   }
