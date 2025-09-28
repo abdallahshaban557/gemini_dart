@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "gemini_dart",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "dependencies": [
         "http",
         "http_parser",
