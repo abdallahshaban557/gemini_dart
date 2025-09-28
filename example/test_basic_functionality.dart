@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import '../lib/src/core/gemini_client.dart';
-import '../lib/src/models/generation_config.dart';
+import 'package:gemini_dart/src/core/gemini_client.dart';
+import 'package:gemini_dart/src/models/generation_config.dart';
 
 /// Test basic GeminiClient functionality after removing capability logic
 void main() async {
