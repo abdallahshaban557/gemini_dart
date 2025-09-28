@@ -2,6 +2,13 @@ import 'dart:io';
 
 /// Base exception class for all Gemini-related errors
 abstract class GeminiException implements Exception {
+  /// Creates a new GeminiException
+  const GeminiException(
+    this.message, {
+    this.code,
+    this.originalError,
+  });
+
   /// The error message
   final String message;
 
@@ -10,13 +17,6 @@ abstract class GeminiException implements Exception {
 
   /// Original error that caused this exception
   final dynamic originalError;
-
-  /// Creates a new GeminiException
-  const GeminiException(
-    this.message, {
-    this.code,
-    this.originalError,
-  });
 
   @override
   String toString() => 'GeminiException: $message';
@@ -37,9 +37,6 @@ class GeminiAuthException extends GeminiException {
 
 /// Exception thrown when rate limits are exceeded
 class GeminiRateLimitException extends GeminiException {
-  /// Duration to wait before retrying
-  final Duration retryAfter;
-
   /// Creates a new GeminiRateLimitException
   const GeminiRateLimitException(
     super.message,
@@ -48,6 +45,9 @@ class GeminiRateLimitException extends GeminiException {
     super.originalError,
   });
 
+  /// Duration to wait before retrying
+  final Duration retryAfter;
+
   @override
   String toString() =>
       'GeminiRateLimitException: $message (retry after: $retryAfter)';
@@ -55,9 +55,6 @@ class GeminiRateLimitException extends GeminiException {
 
 /// Exception thrown when input validation fails
 class GeminiValidationException extends GeminiException {
-  /// Field-specific validation errors
-  final Map<String, String> fieldErrors;
-
   /// Creates a new GeminiValidationException
   const GeminiValidationException(
     super.message,
@@ -66,6 +63,9 @@ class GeminiValidationException extends GeminiException {
     super.originalError,
   });
 
+  /// Field-specific validation errors
+  final Map<String, String> fieldErrors;
+
   @override
   String toString() =>
       'GeminiValidationException: $message (fields: $fieldErrors)';
@@ -73,9 +73,6 @@ class GeminiValidationException extends GeminiException {
 
 /// Exception thrown when network requests fail
 class GeminiNetworkException extends GeminiException {
-  /// HTTP status code if available
-  final int? statusCode;
-
   /// Creates a new GeminiNetworkException
   const GeminiNetworkException(
     super.message, {
@@ -83,6 +80,9 @@ class GeminiNetworkException extends GeminiException {
     super.code,
     super.originalError,
   });
+
+  /// HTTP status code if available
+  final int? statusCode;
 
   @override
   String toString() =>
@@ -104,9 +104,6 @@ class GeminiQuotaException extends GeminiException {
 
 /// Exception thrown when request times out
 class GeminiTimeoutException extends GeminiException {
-  /// The timeout duration that was exceeded
-  final Duration timeout;
-
   /// Creates a new GeminiTimeoutException
   const GeminiTimeoutException(
     super.message,
@@ -115,15 +112,15 @@ class GeminiTimeoutException extends GeminiException {
     super.originalError,
   });
 
+  /// The timeout duration that was exceeded
+  final Duration timeout;
+
   @override
   String toString() => 'GeminiTimeoutException: $message (timeout: $timeout)';
 }
 
 /// Exception thrown when server returns an error
 class GeminiServerException extends GeminiException {
-  /// HTTP status code
-  final int statusCode;
-
   /// Creates a new GeminiServerException
   const GeminiServerException(
     super.message,
@@ -131,6 +128,9 @@ class GeminiServerException extends GeminiException {
     super.code,
     super.originalError,
   });
+
+  /// HTTP status code
+  final int statusCode;
 
   @override
   String toString() => 'GeminiServerException: $message (status: $statusCode)';
@@ -250,7 +250,9 @@ class ExceptionMapper {
     // Default retry after 60 seconds
     const defaultRetryAfter = Duration(seconds: 60);
 
-    if (responseBody == null) return defaultRetryAfter;
+    if (responseBody == null) {
+      return defaultRetryAfter;
+    }
 
     try {
       // Try to parse JSON response for retry information

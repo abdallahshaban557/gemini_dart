@@ -3,16 +3,15 @@ import 'secure_storage.dart';
 
 /// Authentication handler for managing API keys and authentication
 class AuthenticationHandler {
-  String? _apiKey;
-  final SecureStorageInterface _secureStorage;
-
   AuthenticationHandler({SecureStorageInterface? secureStorage})
       : _secureStorage = secureStorage ?? SecureStorage();
+  String? _apiKey;
+  final SecureStorageInterface _secureStorage;
 
   /// Sets the API key for authentication
   void setApiKey(String apiKey) {
     if (apiKey.isEmpty) {
-      throw GeminiAuthException('API key cannot be empty');
+      throw const GeminiAuthException('API key cannot be empty');
     }
     _apiKey = apiKey;
   }

@@ -59,7 +59,7 @@ void main() {
             .thenAnswer((_) async => mockResponse);
 
         // Act
-        final result = await multiModalHandler.generateContent(contents);
+        final result = await multiModalHandler.generateContent(contents: contents);
 
         // Assert
         expect(result.text, equals('Multi-modal analysis complete.'));
@@ -72,7 +72,7 @@ void main() {
       test('should throw validation exception for empty contents', () async {
         // Act & Assert
         expect(
-          () => multiModalHandler.generateContent([]),
+          () => multiModalHandler.generateContent(contents: []),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -139,7 +139,7 @@ void main() {
         // Act
         final responses = <GeminiResponse>[];
         await for (final response
-            in multiModalHandler.generateContentStream(contents)) {
+            in multiModalHandler.generateContentStream(contents: contents)) {
           responses.add(response);
         }
 
@@ -392,7 +392,7 @@ void main() {
 
         // Act & Assert
         expect(
-          () => multiModalHandler.generateContent(contents),
+          () => multiModalHandler.generateContent(contents: contents),
           throwsA(isA<GeminiNetworkException>()),
         );
       });
@@ -405,7 +405,7 @@ void main() {
 
         // Act & Assert
         expect(
-          () => multiModalHandler.generateContent(contents),
+          () => multiModalHandler.generateContent(contents: contents),
           throwsA(isA<GeminiAuthException>()),
         );
       });
@@ -434,7 +434,7 @@ void main() {
             .thenAnswer((_) async => mockResponse);
 
         // The validation should pass for supported types
-        final result = await multiModalHandler.generateContent(contents);
+        final result = await multiModalHandler.generateContent(contents: contents);
         expect(result.text, equals('Test response'));
       });
     });
@@ -448,7 +448,7 @@ void main() {
         // Act & Assert
         expect(
           () => multiModalHandler.generateContent(
-            contents,
+            contents: contents,
             config: invalidConfig,
           ),
           throwsA(isA<ArgumentError>()),

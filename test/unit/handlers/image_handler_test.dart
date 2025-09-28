@@ -54,8 +54,8 @@ void main() {
 
         // Act
         final result = await imageHandler.analyzeImage(
-          validJpegData,
-          'image/jpeg',
+          imageData: validJpegData,
+          mimeType: 'image/jpeg',
           prompt: 'Describe this image',
         );
 
@@ -89,8 +89,8 @@ void main() {
 
         // Act
         final result = await imageHandler.analyzeImage(
-          validJpegData,
-          'image/jpeg',
+          imageData: validJpegData,
+          mimeType: 'image/jpeg',
         );
 
         // Assert
@@ -104,7 +104,7 @@ void main() {
 
         // Act & Assert
         expect(
-          () => imageHandler.analyzeImage(invalidData, 'image/jpeg'),
+          () => imageHandler.analyzeImage(imageData: invalidData, mimeType: 'image/jpeg'),
           throwsA(isA<ArgumentError>()),
         );
       });
@@ -112,7 +112,7 @@ void main() {
       test('should throw validation exception for invalid MIME type', () async {
         // Act & Assert
         expect(
-          () => imageHandler.analyzeImage(validJpegData, 'image/tiff'),
+          () => imageHandler.analyzeImage(imageData: validJpegData, mimeType: 'image/tiff'),
           throwsA(isA<ArgumentError>()),
         );
       });
@@ -204,7 +204,7 @@ void main() {
             .thenAnswer((_) async => mockResponse);
 
         // Act
-        final result = await imageHandler.generateFromContent(contents);
+        final result = await imageHandler.generateFromContent(contents: contents);
 
         // Assert
         expect(result.text, equals('Mixed content analysis.'));
@@ -213,7 +213,7 @@ void main() {
       test('should throw validation exception for empty contents', () async {
         // Act & Assert
         expect(
-          () => imageHandler.generateFromContent([]),
+          () => imageHandler.generateFromContent(contents: []),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -373,8 +373,8 @@ void main() {
 
         // Act
         final result = await imageHandler.extractTextFromImage(
-          validJpegData,
-          'image/jpeg',
+          imageData: validJpegData,
+          mimeType: 'image/jpeg',
         );
 
         // Assert
@@ -405,8 +405,8 @@ void main() {
 
         // Act
         final result = await imageHandler.describeImage(
-          validJpegData,
-          'image/jpeg',
+          imageData: validJpegData,
+          mimeType: 'image/jpeg',
         );
 
         // Assert
@@ -435,8 +435,8 @@ void main() {
 
         // Act
         final result = await imageHandler.describeImage(
-          validJpegData,
-          'image/jpeg',
+          imageData: validJpegData,
+          mimeType: 'image/jpeg',
           focusArea: 'people in the image',
         );
 
@@ -453,7 +453,7 @@ void main() {
 
         // Act & Assert
         expect(
-          () => imageHandler.analyzeImage(validJpegData, 'image/jpeg'),
+          () => imageHandler.analyzeImage(imageData: validJpegData, mimeType: 'image/jpeg'),
           throwsA(isA<GeminiNetworkException>()),
         );
       });
@@ -465,7 +465,7 @@ void main() {
 
         // Act & Assert
         expect(
-          () => imageHandler.analyzeImage(validJpegData, 'image/jpeg'),
+          () => imageHandler.analyzeImage(imageData: validJpegData, mimeType: 'image/jpeg'),
           throwsA(isA<GeminiAuthException>()),
         );
       });
@@ -479,8 +479,8 @@ void main() {
         // Act & Assert
         expect(
           () => imageHandler.analyzeImage(
-            validJpegData,
-            'image/jpeg',
+            imageData: validJpegData,
+            mimeType: 'image/jpeg',
             config: invalidConfig,
           ),
           throwsA(isA<ArgumentError>()),

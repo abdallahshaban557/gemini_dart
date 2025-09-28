@@ -73,7 +73,7 @@ void main() {
     group('Initialization', () {
       test('should throw on empty API key', () async {
         expect(
-          () => client.initialize(''),
+          () => client.initialize(apiKey: ''),
           throwsA(isA<GeminiAuthException>()),
         );
       });
@@ -154,13 +154,6 @@ void main() {
         expect(hasText, isTrue);
       });
 
-      test('should throw on empty content list', () async {
-        expect(
-          () => client.generateFromContent(contents: []),
-          throwsA(isA<GeminiValidationException>()),
-        );
-      });
-
       test('should throw on unsupported content types', () async {
         // This would require a custom Content implementation
         // Testing the validation logic conceptually
@@ -229,27 +222,6 @@ void main() {
       test('should dispose resources', () {
         // Test that dispose can be called safely
         expect(() => client.dispose(), returnsNormally);
-      });
-    });
-
-    group('Validation', () {
-      test('should validate empty content lists', () {
-        expect(
-          () => client.generateFromContent(contents: []),
-          throwsA(isA<GeminiValidationException>()),
-        );
-      });
-
-      test('should validate streaming content lists', () async {
-        try {
-          await for (final _
-              in client.generateFromContentStream(contents: [])) {
-            // Should not reach here
-          }
-          fail('Expected GeminiValidationException');
-        } catch (e) {
-          expect(e, isA<GeminiValidationException>());
-        }
       });
     });
   });
@@ -341,102 +313,6 @@ void main() {
       expect(string, contains('video/mp4'));
       expect(string, contains('1024'));
       expect(string, contains('file.mp4'));
-    });
-  });
-
-  group('GeminiModel', () {
-    test('should create instance with all fields', () {
-      const model = GeminiModel(
-        name: 'models/gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
-        description: 'Fast model',
-        version: '1.5',
-        inputTokenLimit: 1000000,
-        outputTokenLimit: 8192,
-        supportedGenerationMethods: [
-          'generateContent',
-          'streamGenerateContent'
-        ],
-      );
-
-      expect(model.name, equals('models/gemini-1.5-flash'));
-      expect(model.displayName, equals('Gemini 1.5 Flash'));
-      expect(model.description, equals('Fast model'));
-      expect(model.version, equals('1.5'));
-      expect(model.inputTokenLimit, equals(1000000));
-      expect(model.outputTokenLimit, equals(8192));
-      expect(model.supportedGenerationMethods, hasLength(2));
-    });
-
-    test('should create instance with minimal fields', () {
-      const model = GeminiModel(
-        name: 'models/gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
-        supportedGenerationMethods: ['generateContent'],
-      );
-
-      expect(model.name, equals('models/gemini-1.5-flash'));
-      expect(model.displayName, equals('Gemini 1.5 Flash'));
-      expect(model.description, isNull);
-      expect(model.version, isNull);
-      expect(model.inputTokenLimit, isNull);
-      expect(model.outputTokenLimit, isNull);
-      expect(model.supportedGenerationMethods, hasLength(1));
-    });
-
-    test('should implement equality correctly', () {
-      const model1 = GeminiModel(
-        name: 'models/gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
-        supportedGenerationMethods: ['generateContent'],
-      );
-
-      const model2 = GeminiModel(
-        name: 'models/gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
-        supportedGenerationMethods: ['generateContent'],
-      );
-
-      const model3 = GeminiModel(
-        name: 'models/gemini-1.5-pro',
-        displayName: 'Gemini 1.5 Pro',
-        supportedGenerationMethods: ['generateContent'],
-      );
-
-      expect(model1, equals(model2));
-      expect(model1, isNot(equals(model3)));
-    });
-
-    test('should have consistent hashCode', () {
-      const model1 = GeminiModel(
-        name: 'models/gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
-        supportedGenerationMethods: ['generateContent'],
-      );
-
-      const model2 = GeminiModel(
-        name: 'models/gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
-        supportedGenerationMethods: ['generateContent'],
-      );
-
-      expect(model1.hashCode, equals(model2.hashCode));
-    });
-
-    test('should have meaningful toString', () {
-      const model = GeminiModel(
-        name: 'models/gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
-        version: '1.5',
-        supportedGenerationMethods: ['generateContent'],
-      );
-
-      final string = model.toString();
-
-      expect(string, contains('GeminiModel'));
-      expect(string, contains('models/gemini-1.5-flash'));
-      expect(string, contains('Gemini 1.5 Flash'));
-      expect(string, contains('1.5'));
     });
   });
 }

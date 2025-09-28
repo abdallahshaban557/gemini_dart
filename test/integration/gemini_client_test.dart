@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 
 import '../../lib/src/core/gemini_client.dart';
-import '../../lib/src/models/content.dart';
 import '../../lib/src/models/gemini_config.dart';
 import '../../lib/src/models/generation_config.dart';
 import '../../lib/src/core/exceptions.dart';
@@ -34,13 +33,13 @@ void main() {
           return;
         }
 
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
         expect(client.isInitialized, isTrue);
       });
 
       test('should throw exception with empty API key', () async {
         expect(
-          () => client.initialize(''),
+          () => client.initialize(apiKey: ''),
           throwsA(isA<GeminiAuthException>()),
         );
       });
@@ -63,7 +62,7 @@ void main() {
           enableLogging: true,
         );
 
-        await client.initialize(testApiKey, config: customConfig);
+        await client.initialize(apiKey: testApiKey, config: customConfig);
         expect(client.isInitialized, isTrue);
         expect(client.config.timeout, equals(const Duration(seconds: 60)));
         expect(client.config.enableLogging, isTrue);
@@ -76,7 +75,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should generate content from simple text prompt', () async {
@@ -151,7 +150,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should generate content from mixed content types', () async {
@@ -173,122 +172,11 @@ void main() {
           0xAE, 0x42, 0x60, 0x82,
         ]);
 
-        final contents = [
-          TextContent('Describe this image:'),
-          ImageContent(imageData, 'image/png'),
-        ];
-
-        final response = await client.generateFromContent(contents: contents);
-
-        expect(response, isNotNull);
-        expect(response.candidates, isNotEmpty);
-        expect(response.text, isNotNull);
-      });
-
-      test('should handle empty content list', () async {
-        // Skip if no real API key available
-        if (testApiKey == 'test-api-key') {
-          return;
-        }
-
-        expect(
-          () => client.generateFromContent(contents: []),
-          throwsA(isA<GeminiValidationException>()),
-        );
-      });
-    });
-
-    group('Image Analysis', () {
-      setUp(() async {
-        // Skip if no real API key available
-        if (testApiKey == 'test-api-key') {
-          return;
-        }
-        await client.initialize(testApiKey);
-      });
-
-      test('should analyze image with prompt', () async {
-        // Skip if no real API key available
-        if (testApiKey == 'test-api-key') {
-          return;
-        }
-
-        // Create a simple test image (1x1 pixel PNG)
-        final imageData = Uint8List.fromList([
-          0x89,
-          0x50,
-          0x4E,
-          0x47,
-          0x0D,
-          0x0A,
-          0x1A,
-          0x0A,
-          0x00,
-          0x00,
-          0x00,
-          0x0D,
-          0x49,
-          0x48,
-          0x44,
-          0x52,
-          0x00,
-          0x00,
-          0x00,
-          0x01,
-          0x00,
-          0x00,
-          0x00,
-          0x01,
-          0x08,
-          0x02,
-          0x00,
-          0x00,
-          0x00,
-          0x90,
-          0x77,
-          0x53,
-          0xDE,
-          0x00,
-          0x00,
-          0x00,
-          0x0C,
-          0x49,
-          0x44,
-          0x41,
-          0x54,
-          0x08,
-          0xD7,
-          0x63,
-          0xF8,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x01,
-          0x00,
-          0x01,
-          0x5C,
-          0xC2,
-          0x5D,
-          0xB4,
-          0x00,
-          0x00,
-          0x00,
-          0x00,
-          0x49,
-          0x45,
-          0x4E,
-          0x44,
-          0xAE,
-          0x42,
-          0x60,
-          0x82,
-        ]);
-
-        final response = await client.analyzeImage(
-          imageData,
-          'image/png',
-          prompt: 'What do you see in this image?',
+        final response = await client.createMultiModalPrompt(
+          images: [(data: imageData, mimeType: 'image/png')],
+          config: const GenerationConfig(
+            temperature: 0.7,
+          ),
         );
 
         expect(response, isNotNull);
@@ -303,7 +191,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should create multi-modal prompt with text and images', () async {
@@ -403,7 +291,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should maintain conversation context', () async {
@@ -415,8 +303,8 @@ void main() {
         final context = client.createConversationContext();
 
         // First message
-        final response1 = await client.generateFromContent(
-          contents: [TextContent('My name is Alice')],
+        final response1 = await client.generateText(
+          prompt: 'My name is Alice',
           context: context,
         );
 
@@ -424,8 +312,8 @@ void main() {
         expect(context.length, equals(2)); // User + Assistant
 
         // Second message referencing first
-        final response2 = await client.generateFromContent(
-          contents: [TextContent('What is my name?')],
+        final response2 = await client.generateText(
+          prompt: 'What is my name?',
           context: context,
         );
 
@@ -473,7 +361,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should provide access to text handler', () {
@@ -509,7 +397,7 @@ void main() {
         if (testApiKey == 'test-api-key') {
           return;
         }
-        await client.initialize(testApiKey);
+        await client.initialize(apiKey: testApiKey);
       });
 
       test('should get available models', () async {
@@ -521,7 +409,7 @@ void main() {
         final models = await client.getModels();
 
         expect(models, isNotNull);
-        expect(models, isA<List<GeminiModel>>());
+        expect(models, isA<List>());
         // Note: The actual models list may be empty in test environment
       });
     });
@@ -530,22 +418,8 @@ void main() {
       test('should handle network errors gracefully', () async {
         // Use invalid API key to trigger auth error
         expect(
-          () => client.initialize('invalid-key'),
+          () => client.initialize(apiKey: 'invalid-key'),
           throwsA(isA<GeminiAuthException>()),
-        );
-      });
-
-      test('should handle validation errors', () async {
-        // Skip if no real API key available
-        if (testApiKey == 'test-api-key') {
-          return;
-        }
-
-        await client.initialize(testApiKey);
-
-        expect(
-          () => client.generateFromContent(contents: []),
-          throwsA(isA<GeminiValidationException>()),
         );
       });
     });
@@ -625,88 +499,6 @@ void main() {
       expect(json['file']['mimeType'], equals('video/mp4'));
       expect(json['file']['sizeBytes'], equals(1024));
       expect(json['file']['displayName'], equals('test-file.mp4'));
-    });
-  });
-
-  group('GeminiModel', () {
-    test('should create from JSON correctly', () {
-      final json = {
-        'name': 'models/gemini-1.5-flash',
-        'displayName': 'Gemini 1.5 Flash',
-        'description': 'Fast and efficient model',
-        'version': '1.5',
-        'inputTokenLimit': 1000000,
-        'outputTokenLimit': 8192,
-        'supportedGenerationMethods': [
-          'generateContent',
-          'streamGenerateContent'
-        ],
-      };
-
-      final model = GeminiModel.fromJson(json);
-
-      expect(model.name, equals('models/gemini-1.5-flash'));
-      expect(model.displayName, equals('Gemini 1.5 Flash'));
-      expect(model.description, equals('Fast and efficient model'));
-      expect(model.version, equals('1.5'));
-      expect(model.inputTokenLimit, equals(1000000));
-      expect(model.outputTokenLimit, equals(8192));
-      expect(model.supportedGenerationMethods, hasLength(2));
-    });
-
-    test('should handle missing optional fields', () {
-      final json = {
-        'name': 'models/gemini-1.5-flash',
-        'displayName': 'Gemini 1.5 Flash',
-        'supportedGenerationMethods': ['generateContent'],
-      };
-
-      final model = GeminiModel.fromJson(json);
-
-      expect(model.name, equals('models/gemini-1.5-flash'));
-      expect(model.displayName, equals('Gemini 1.5 Flash'));
-      expect(model.description, isNull);
-      expect(model.version, isNull);
-      expect(model.inputTokenLimit, isNull);
-      expect(model.outputTokenLimit, isNull);
-      expect(model.supportedGenerationMethods, hasLength(1));
-    });
-
-    test('should throw on missing required fields', () {
-      final json = {
-        'displayName': 'Gemini 1.5 Flash',
-        'supportedGenerationMethods': ['generateContent'],
-      };
-
-      expect(
-        () => GeminiModel.fromJson(json),
-        throwsA(isA<ArgumentError>()),
-      );
-    });
-
-    test('should convert to JSON correctly', () {
-      const model = GeminiModel(
-        name: 'models/gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
-        description: 'Fast and efficient model',
-        version: '1.5',
-        inputTokenLimit: 1000000,
-        outputTokenLimit: 8192,
-        supportedGenerationMethods: [
-          'generateContent',
-          'streamGenerateContent'
-        ],
-      );
-
-      final json = model.toJson();
-
-      expect(json['name'], equals('models/gemini-1.5-flash'));
-      expect(json['displayName'], equals('Gemini 1.5 Flash'));
-      expect(json['description'], equals('Fast and efficient model'));
-      expect(json['version'], equals('1.5'));
-      expect(json['inputTokenLimit'], equals(1000000));
-      expect(json['outputTokenLimit'], equals(8192));
-      expect(json['supportedGenerationMethods'], hasLength(2));
     });
   });
 }

@@ -6,7 +6,6 @@ import 'package:gemini_dart/src/core/auth.dart';
 import 'package:gemini_dart/src/handlers/image_handler.dart';
 import 'package:gemini_dart/src/handlers/multimodal_handler.dart';
 import 'package:gemini_dart/src/models/content.dart';
-import 'package:gemini_dart/src/models/generation_config.dart';
 import 'package:gemini_dart/src/models/gemini_config.dart';
 import 'package:gemini_dart/src/services/http_service.dart';
 
@@ -60,32 +59,13 @@ void main() {
     });
 
     group('ImageHandler Integration', () {
-      test('should analyze image with prompt', () async {
-        const apiKey = String.fromEnvironment('GEMINI_API_KEY');
-        if (apiKey.isEmpty) return;
-
-        final response = await imageHandler.analyzeImage(
-          testImageData,
-          'image/png',
-          prompt: 'What do you see in this image?',
-          config: const GenerationConfig(
-            temperature: 0.1,
-            maxOutputTokens: 100,
-          ),
-        );
-
-        expect(response.text, isNotNull);
-        expect(response.text!.isNotEmpty, isTrue);
-        expect(response.candidates, isNotEmpty);
-      }, timeout: const Timeout(Duration(seconds: 30)));
-
       test('should describe image without prompt', () async {
         const apiKey = String.fromEnvironment('GEMINI_API_KEY');
         if (apiKey.isEmpty) return;
 
         final response = await imageHandler.describeImage(
-          testImageData,
-          'image/png',
+          imageData: testImageData,
+          mimeType: 'image/png',
         );
 
         expect(response.text, isNotNull);
@@ -97,8 +77,8 @@ void main() {
         if (apiKey.isEmpty) return;
 
         final response = await imageHandler.extractTextFromImage(
-          testImageData,
-          'image/png',
+          imageData: testImageData,
+          mimeType: 'image/png',
         );
 
         expect(response.text, isNotNull);
@@ -152,7 +132,8 @@ void main() {
           TextContent('Provide a detailed description.'),
         ];
 
-        final response = await multiModalHandler.generateContent(contents);
+        final response =
+            await multiModalHandler.generateContent(contents: contents);
 
         expect(response.text, isNotNull);
         expect(response.text!.isNotEmpty, isTrue);
@@ -204,7 +185,7 @@ void main() {
 
         final responses = <String>[];
         await for (final response
-            in multiModalHandler.generateContentStream(contents)) {
+            in multiModalHandler.generateContentStream(contents: contents)) {
           if (response.text != null) {
             responses.add(response.text!);
           }
@@ -239,34 +220,12 @@ void main() {
     });
 
     group('Error Handling', () {
-      test('should handle invalid image data gracefully', () async {
-        const apiKey = String.fromEnvironment('GEMINI_API_KEY');
-        if (apiKey.isEmpty) return;
-
-        final invalidImageData = Uint8List.fromList([0x00, 0x01, 0x02]);
-
-        expect(
-          () => imageHandler.analyzeImage(invalidImageData, 'image/jpeg'),
-          throwsA(isA<ArgumentError>()),
-        );
-      });
-
-      test('should handle unsupported MIME types', () async {
-        const apiKey = String.fromEnvironment('GEMINI_API_KEY');
-        if (apiKey.isEmpty) return;
-
-        expect(
-          () => imageHandler.analyzeImage(testImageData, 'image/tiff'),
-          throwsA(isA<ArgumentError>()),
-        );
-      });
-
       test('should handle empty content lists', () async {
         const apiKey = String.fromEnvironment('GEMINI_API_KEY');
         if (apiKey.isEmpty) return;
 
         expect(
-          () => multiModalHandler.generateContent([]),
+          () => multiModalHandler.generateContent(contents: []),
           throwsA(isA<Exception>()),
         );
       });

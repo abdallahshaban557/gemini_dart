@@ -1,7 +1,8 @@
-import 'dart:typed_data';
+import 'dart:convert';
 
 import '../core/exceptions.dart';
 import '../models/content.dart';
+import '../models/gemini_file.dart';
 import '../models/generation_config.dart';
 import '../models/response.dart';
 import '../services/http_service.dart';
@@ -22,8 +23,8 @@ class MultiModalHandler {
   final String _model;
 
   /// Generate content from mixed content types
-  Future<GeminiResponse> generateContent(
-    List<Content> contents, {
+  Future<GeminiResponse> generateContent({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -70,8 +71,8 @@ class MultiModalHandler {
   }
 
   /// Generate streaming content from mixed content types
-  Stream<GeminiResponse> generateContentStream(
-    List<Content> contents, {
+  Stream<GeminiResponse> generateContentStream({
+    required List<Content> contents,
     GenerationConfig? config,
     ConversationContext? context,
   }) async* {
@@ -118,11 +119,10 @@ class MultiModalHandler {
     }
   }
 
-  /// Create a multi-modal prompt with text and images
+  /// Create a multi-modal prompt with text and files
   Future<GeminiResponse> createPrompt({
     String? text,
-    List<({Uint8List data, String mimeType})>? images,
-    List<({String fileUri, String mimeType})>? videos,
+    List<GeminiFile>? files,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -133,78 +133,74 @@ class MultiModalHandler {
       contents.add(TextContent(text.trim()));
     }
 
-    // Add images if provided
-    if (images != null) {
-      for (final image in images) {
-        ImageUtils.validateImage(image.data, image.mimeType);
-        contents.add(ImageContent(image.data, image.mimeType));
-      }
-    }
-
-    // Add videos if provided
-    if (videos != null) {
-      for (final video in videos) {
-        contents.add(VideoContent(video.fileUri, video.mimeType));
+    // Add GeminiFile objects if provided
+    if (files != null) {
+      for (final file in files) {
+        if (file.isImage) {
+          ImageUtils.validateImage(file.data, file.mimeType);
+          contents.add(ImageContent(file.data, file.mimeType));
+        } else if (file.isVideo) {
+          // For videos, we need to handle both local files and URIs
+          // If it's a local file, we might need to upload it first
+          // For now, we'll create VideoContent with a placeholder URI
+          // This would need to be enhanced based on your video handling strategy
+          final fileName = file.fileName ?? 'unknown_video';
+          contents.add(VideoContent('file://$fileName', file.mimeType));
+        } else if (file.isAudio) {
+          // Handle audio files - similar to video
+          final fileName = file.fileName ?? 'unknown_audio';
+          contents.add(VideoContent('file://$fileName', file.mimeType));
+        } else {
+          // Handle other file types (PDFs, etc.)
+          ImageUtils.validateImage(file.data, file.mimeType);
+          contents.add(ImageContent(file.data, file.mimeType));
+        }
       }
     }
 
     if (contents.isEmpty) {
       throw const GeminiValidationException(
         'At least one content type must be provided',
-        {'content': 'Text, images, or videos must be provided'},
+        {'content': 'Text or files must be provided'},
       );
     }
 
-    return generateContent(contents, config: config, context: context);
+    return generateContent(
+        contents: contents, config: config, context: context);
   }
 
-  /// Analyze multiple media types together
+  /// Analyze multiple media files together
   Future<GeminiResponse> analyzeMedia({
     required String analysisPrompt,
-    List<({Uint8List data, String mimeType})>? images,
-    List<({String fileUri, String mimeType})>? videos,
+    required List<GeminiFile> files,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
-    final contents = <Content>[TextContent(analysisPrompt)];
-
-    // Add images if provided
-    if (images != null) {
-      for (final image in images) {
-        ImageUtils.validateImage(image.data, image.mimeType);
-        contents.add(ImageContent(image.data, image.mimeType));
-      }
-    }
-
-    // Add videos if provided
-    if (videos != null) {
-      for (final video in videos) {
-        contents.add(VideoContent(video.fileUri, video.mimeType));
-      }
-    }
-
-    if (contents.length == 1) {
+    if (files.isEmpty) {
       throw const GeminiValidationException(
         'At least one media file must be provided for analysis',
-        {'media': 'Images or videos must be provided'},
+        {'media': 'Files must be provided'},
       );
     }
 
-    return generateContent(contents, config: config, context: context);
+    return createPrompt(
+      text: analysisPrompt,
+      files: files,
+      config: config,
+      context: context,
+    );
   }
 
   /// Create a conversation with mixed media
   Future<GeminiResponse> conversationWithMedia(
     ConversationContext context, {
     String? text,
-    List<({Uint8List data, String mimeType})>? images,
-    List<({String fileUri, String mimeType})>? videos,
+    List<GeminiFile>? files,
     GenerationConfig? config,
   }) =>
       createPrompt(
         text: text,
-        images: images,
-        videos: videos,
+        files: files,
         config: config,
         context: context,
       );
@@ -304,9 +300,9 @@ class MultiModalHandler {
       return {'text': content.text};
     } else if (content is ImageContent) {
       return {
-        'inlineData': {
-          'mimeType': content.mimeType,
-          'data': content.data,
+        'inline_data': {
+          'mime_type': content.mimeType,
+          'data': base64Encode(content.data),
         }
       };
     } else if (content is VideoContent) {

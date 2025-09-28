@@ -295,16 +295,17 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
   }
 
   @override
-  _i4.Future<_i2.GeminiResponse> generateContent(
-    String? prompt, {
+  _i4.Future<_i2.GeminiResponse> generateContent({
+    required String? prompt,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #generateContent,
-          [prompt],
+          [],
           {
+            #prompt: prompt,
             #config: config,
             #context: context,
           },
@@ -313,8 +314,9 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
           this,
           Invocation.method(
             #generateContent,
-            [prompt],
+            [],
             {
+              #prompt: prompt,
               #config: config,
               #context: context,
             },
@@ -353,16 +355,17 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
       ) as _i4.Future<_i2.GeminiResponse>);
 
   @override
-  _i4.Stream<_i2.GeminiResponse> generateContentStream(
-    String? prompt, {
+  _i4.Stream<_i2.GeminiResponse> generateContentStream({
+    required String? prompt,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #generateContentStream,
-          [prompt],
+          [],
           {
+            #prompt: prompt,
             #config: config,
             #context: context,
           },
@@ -390,29 +393,31 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
       ) as _i4.Stream<_i2.GeminiResponse>);
 
   @override
-  _i4.Future<_i2.GeminiResponse> generateWithContext(
-    _i9.ConversationContext? context,
-    String? prompt, {
+  _i4.Future<_i2.GeminiResponse> generateWithContext({
+    required _i9.ConversationContext? context,
+    required String? prompt,
     _i8.GenerationConfig? config,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #generateWithContext,
-          [
-            context,
-            prompt,
-          ],
-          {#config: config},
+          [],
+          {
+            #context: context,
+            #prompt: prompt,
+            #config: config,
+          },
         ),
         returnValue: _i4.Future<_i2.GeminiResponse>.value(_FakeGeminiResponse_0(
           this,
           Invocation.method(
             #generateWithContext,
-            [
-              context,
-              prompt,
-            ],
-            {#config: config},
+            [],
+            {
+              #context: context,
+              #prompt: prompt,
+              #config: config,
+            },
           ),
         )),
       ) as _i4.Future<_i2.GeminiResponse>);
@@ -445,9 +450,9 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
   }
 
   @override
-  _i4.Future<_i2.GeminiResponse> analyzeImage(
-    _i12.Uint8List? imageData,
-    String? mimeType, {
+  _i4.Future<_i2.GeminiResponse> analyzeImage({
+    required _i12.Uint8List? imageData,
+    required String? mimeType,
     String? prompt,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
@@ -455,11 +460,10 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
       (super.noSuchMethod(
         Invocation.method(
           #analyzeImage,
-          [
-            imageData,
-            mimeType,
-          ],
+          [],
           {
+            #imageData: imageData,
+            #mimeType: mimeType,
             #prompt: prompt,
             #config: config,
             #context: context,
@@ -469,11 +473,10 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
           this,
           Invocation.method(
             #analyzeImage,
-            [
-              imageData,
-              mimeType,
-            ],
+            [],
             {
+              #imageData: imageData,
+              #mimeType: mimeType,
               #prompt: prompt,
               #config: config,
               #context: context,
@@ -514,16 +517,17 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
       ) as _i4.Future<_i2.GeminiResponse>);
 
   @override
-  _i4.Future<_i2.GeminiResponse> generateFromContent(
-    List<_i10.Content>? contents, {
+  _i4.Future<_i2.GeminiResponse> generateFromContent({
+    required List<_i10.Content>? contents,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #generateFromContent,
-          [contents],
+          [],
           {
+            #contents: contents,
             #config: config,
             #context: context,
           },
@@ -532,8 +536,9 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
           this,
           Invocation.method(
             #generateFromContent,
-            [contents],
+            [],
             {
+              #contents: contents,
               #config: config,
               #context: context,
             },
@@ -605,20 +610,19 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
       ) as _i4.Future<_i2.GeminiResponse>);
 
   @override
-  _i4.Future<_i2.GeminiResponse> extractTextFromImage(
-    _i12.Uint8List? imageData,
-    String? mimeType, {
+  _i4.Future<_i2.GeminiResponse> extractTextFromImage({
+    required _i12.Uint8List? imageData,
+    required String? mimeType,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #extractTextFromImage,
-          [
-            imageData,
-            mimeType,
-          ],
+          [],
           {
+            #imageData: imageData,
+            #mimeType: mimeType,
             #config: config,
             #context: context,
           },
@@ -627,11 +631,10 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
           this,
           Invocation.method(
             #extractTextFromImage,
-            [
-              imageData,
-              mimeType,
-            ],
+            [],
             {
+              #imageData: imageData,
+              #mimeType: mimeType,
               #config: config,
               #context: context,
             },
@@ -640,9 +643,9 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
       ) as _i4.Future<_i2.GeminiResponse>);
 
   @override
-  _i4.Future<_i2.GeminiResponse> describeImage(
-    _i12.Uint8List? imageData,
-    String? mimeType, {
+  _i4.Future<_i2.GeminiResponse> describeImage({
+    required _i12.Uint8List? imageData,
+    required String? mimeType,
     String? focusArea,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
@@ -650,11 +653,10 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
       (super.noSuchMethod(
         Invocation.method(
           #describeImage,
-          [
-            imageData,
-            mimeType,
-          ],
+          [],
           {
+            #imageData: imageData,
+            #mimeType: mimeType,
             #focusArea: focusArea,
             #config: config,
             #context: context,
@@ -664,11 +666,10 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
           this,
           Invocation.method(
             #describeImage,
-            [
-              imageData,
-              mimeType,
-            ],
+            [],
             {
+              #imageData: imageData,
+              #mimeType: mimeType,
               #focusArea: focusArea,
               #config: config,
               #context: context,
@@ -687,16 +688,17 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
   }
 
   @override
-  _i4.Future<_i2.GeminiResponse> generateContent(
-    List<_i10.Content>? contents, {
+  _i4.Future<_i2.GeminiResponse> generateContent({
+    required List<_i10.Content>? contents,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #generateContent,
-          [contents],
+          [],
           {
+            #contents: contents,
             #config: config,
             #context: context,
           },
@@ -705,8 +707,9 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
           this,
           Invocation.method(
             #generateContent,
-            [contents],
+            [],
             {
+              #contents: contents,
               #config: config,
               #context: context,
             },
@@ -715,16 +718,17 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
       ) as _i4.Future<_i2.GeminiResponse>);
 
   @override
-  _i4.Stream<_i2.GeminiResponse> generateContentStream(
-    List<_i10.Content>? contents, {
+  _i4.Stream<_i2.GeminiResponse> generateContentStream({
+    required List<_i10.Content>? contents,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #generateContentStream,
-          [contents],
+          [],
           {
+            #contents: contents,
             #config: config,
             #context: context,
           },

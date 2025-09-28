@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 /// Abstract base class for all content types that can be sent to Gemini API
@@ -14,11 +15,43 @@ abstract class Content {
     if (json.containsKey('parts')) {
       final parts = json['parts'] as List<dynamic>?;
       if (parts != null && parts.isNotEmpty) {
+        // Check if we have multiple parts with different types
+        String? text;
+        List<ImageContent> images = [];
+
+        for (final part in parts) {
+          final partMap = part as Map<String, dynamic>;
+          if (partMap.containsKey('text')) {
+            text = partMap['text'] as String;
+          } else if (partMap.containsKey('inlineData')) {
+            final inlineData = partMap['inlineData'] as Map<String, dynamic>;
+            final imageData = inlineData['data'] as String;
+            final mimeType = inlineData['mimeType'] as String;
+
+            // Convert base64 to bytes
+            final bytes = base64Decode(imageData);
+            images.add(ImageContent(bytes, mimeType));
+          }
+        }
+
+        // If we have both text and images, return MultiPartContent
+        if (text != null && images.isNotEmpty) {
+          return MultiPartContent(text: text, images: images);
+        }
+        // If we only have text, return TextContent
+        else if (text != null) {
+          return TextContent(text);
+        }
+        // If we only have images, return the first image
+        else if (images.isNotEmpty) {
+          return images.first;
+        }
+
+        // Fallback to first part as text
         final firstPart = parts.first as Map<String, dynamic>;
         if (firstPart.containsKey('text')) {
           return TextContent(firstPart['text'] as String);
         }
-        // Handle other part types as needed
       }
     }
 
@@ -37,6 +70,8 @@ abstract class Content {
         return ImageContent.fromJson(json);
       case 'video':
         return VideoContent.fromJson(json);
+      case 'multipart':
+        return MultiPartContent.fromJson(json);
       default:
         throw ArgumentError('Unknown content type: $type');
     }
@@ -246,4 +281,88 @@ class VideoContent extends Content {
 
   @override
   String toString() => 'VideoContent(fileUri: $fileUri, mimeType: $mimeType)';
+}
+
+/// Multi-part content containing both text and image data
+/// Used for responses from image generation that include both description and generated images
+class MultiPartContent extends Content {
+  /// The text description
+  final String text;
+
+  /// The generated images
+  final List<ImageContent> images;
+
+  /// Creates a new MultiPartContent with text and images
+  MultiPartContent({
+    required this.text,
+    required this.images,
+  }) {
+    if (images.isEmpty) {
+      throw ArgumentError('Images list cannot be empty for MultiPartContent');
+    }
+  }
+
+  @override
+  String get type => 'multipart';
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': type,
+        'text': text,
+        'images': images.map((img) => img.toJson()).toList(),
+      };
+
+  /// Create MultiPartContent from JSON
+  factory MultiPartContent.fromJson(Map<String, dynamic> json) {
+    final text = json['text'] as String?;
+    final imagesJson = json['images'] as List<dynamic>?;
+
+    if (text == null) {
+      throw ArgumentError('Text field is required for MultiPartContent');
+    }
+    if (imagesJson == null) {
+      throw ArgumentError('Images field is required for MultiPartContent');
+    }
+
+    final images = imagesJson
+        .map((img) => ImageContent.fromJson(img as Map<String, dynamic>))
+        .toList();
+
+    return MultiPartContent(text: text, images: images);
+  }
+
+  /// Get the first generated image
+  ImageContent get firstImage => images.first;
+
+  /// Get all image data as bytes
+  List<Uint8List> get imageDataList => images.map((img) => img.data).toList();
+
+  /// Get all image MIME types
+  List<String> get imageMimeTypes => images.map((img) => img.mimeType).toList();
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    return other is MultiPartContent &&
+        other.text == text &&
+        _listEquals(other.images, images);
+  }
+
+  @override
+  int get hashCode => Object.hash(text, images.length);
+
+  @override
+  String toString() =>
+      'MultiPartContent(text: $text, images: ${images.length})';
+
+  /// Helper method to compare lists
+  static bool _listEquals<T>(List<T> a, List<T> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
 }
