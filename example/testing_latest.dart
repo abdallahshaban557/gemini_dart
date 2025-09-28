@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+// ✅ Single import - GeminiFile now available from main export!
 import 'package:gemini_dart/gemini_dart.dart';
-import 'package:gemini_dart/src/models/gemini_file.dart';
 
 /// Example using model selection in constructor
 void main() async {
@@ -16,7 +16,8 @@ void main() async {
   try {
     // Example 1: Image generation model
     print('🎨 === IMAGE GENERATION MODEL ===');
-    final imageClient = GeminiClient(model: GeminiModels.gemini15Flash);
+    final imageClient =
+        GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
     await imageClient.initialize(apiKey: apiKey);
 
     final testing = await imageClient.generateImage(
