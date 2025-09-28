@@ -104,15 +104,13 @@ class _TextOnlyClientImpl implements BaseGeminiClient {
     required String prompt,
     GenerationConfig? config,
     ConversationContext? context,
-  }) =>
-      _client.generateText(prompt: prompt, config: config, context: context);
+  }) => _client.generateText(prompt: prompt, config: config, context: context);
 
   @override
   Stream<GeminiResponse> generateTextStream({
     required String prompt,
     GenerationConfig? config,
-  }) =>
-      _client.generateTextStream(prompt: prompt, config: config);
+  }) => _client.generateTextStream(prompt: prompt, config: config);
 }
 
 /// Image generation client implementation
@@ -121,7 +119,7 @@ class _ImageGenerationClientImpl implements ImageGenerationCapable {
   final GeminiModel _model;
 
   _ImageGenerationClientImpl(this._model)
-      : _client = GeminiClient(model: _model);
+    : _client = GeminiClient(model: _model);
 
   @override
   Future<void> initialize({required String apiKey, GeminiConfig? config}) =>
@@ -145,15 +143,13 @@ class _ImageGenerationClientImpl implements ImageGenerationCapable {
     required String prompt,
     GenerationConfig? config,
     ConversationContext? context,
-  }) =>
-      _client.generateText(prompt: prompt, config: config, context: context);
+  }) => _client.generateText(prompt: prompt, config: config, context: context);
 
   @override
   Stream<GeminiResponse> generateTextStream({
     required String prompt,
     GenerationConfig? config,
-  }) =>
-      _client.generateTextStream(prompt: prompt, config: config);
+  }) => _client.generateTextStream(prompt: prompt, config: config);
 
   @override
   Future<GeminiResponse> generateImage({
@@ -161,13 +157,12 @@ class _ImageGenerationClientImpl implements ImageGenerationCapable {
     List<GeminiFile>? geminiFiles,
     GenerationConfig? config,
     ConversationContext? context,
-  }) =>
-      _client.generateImage(
-        prompt: prompt,
-        geminiFiles: geminiFiles,
-        config: config,
-        context: context,
-      );
+  }) => _client.generateImage(
+    prompt: prompt,
+    geminiFiles: geminiFiles,
+    config: config,
+    context: context,
+  );
 
   @override
   Future<GeminiResponse> createMultiModalPrompt({
@@ -175,13 +170,12 @@ class _ImageGenerationClientImpl implements ImageGenerationCapable {
     List<GeminiFile>? images,
     GenerationConfig? config,
     ConversationContext? context,
-  }) =>
-      _client.createMultiModalPrompt(
-        text: text,
-        files: images,
-        config: config,
-        context: context,
-      );
+  }) => _client.createMultiModalPrompt(
+    text: text,
+    files: images,
+    config: config,
+    context: context,
+  );
 }
 
 /// Multi-modal client implementation
@@ -213,15 +207,13 @@ class _AnalysisClientImpl implements AnalysisCapable {
     required String prompt,
     GenerationConfig? config,
     ConversationContext? context,
-  }) =>
-      _client.generateText(prompt: prompt, config: config, context: context);
+  }) => _client.generateText(prompt: prompt, config: config, context: context);
 
   @override
   Stream<GeminiResponse> generateTextStream({
     required String prompt,
     GenerationConfig? config,
-  }) =>
-      _client.generateTextStream(prompt: prompt, config: config);
+  }) => _client.generateTextStream(prompt: prompt, config: config);
 
   @override
   Future<GeminiResponse> analyzeImage({
@@ -229,13 +221,12 @@ class _AnalysisClientImpl implements AnalysisCapable {
     required List<GeminiFile> images,
     GenerationConfig? config,
     ConversationContext? context,
-  }) =>
-      _client.createMultiModalPrompt(
-        text: prompt,
-        files: images,
-        config: config,
-        context: context,
-      );
+  }) => _client.createMultiModalPrompt(
+    text: prompt,
+    files: images,
+    config: config,
+    context: context,
+  );
 
   @override
   Future<GeminiResponse> analyzeDocument({
@@ -243,13 +234,12 @@ class _AnalysisClientImpl implements AnalysisCapable {
     required List<GeminiFile> documents,
     GenerationConfig? config,
     ConversationContext? context,
-  }) =>
-      _client.createMultiModalPrompt(
-        text: prompt,
-        files: documents,
-        config: config,
-        context: context,
-      );
+  }) => _client.createMultiModalPrompt(
+    text: prompt,
+    files: documents,
+    config: config,
+    context: context,
+  );
 
   @override
   Future<GeminiResponse> analyzeVideo({
@@ -257,13 +247,12 @@ class _AnalysisClientImpl implements AnalysisCapable {
     required List<GeminiFile> videos,
     GenerationConfig? config,
     ConversationContext? context,
-  }) =>
-      _client.createMultiModalPrompt(
-        text: prompt,
-        files: videos,
-        config: config,
-        context: context,
-      );
+  }) => _client.createMultiModalPrompt(
+    text: prompt,
+    files: videos,
+    config: config,
+    context: context,
+  );
 
   @override
   Future<GeminiResponse> createMultiModalPrompt({
@@ -272,13 +261,12 @@ class _AnalysisClientImpl implements AnalysisCapable {
     List<GeminiFile>? videos,
     GenerationConfig? config,
     ConversationContext? context,
-  }) =>
-      _client.createMultiModalPrompt(
-        text: text,
-        files: [...?images, ...?videos],
-        config: config,
-        context: context,
-      );
+  }) => _client.createMultiModalPrompt(
+    text: text,
+    files: [...?images, ...?videos],
+    config: config,
+    context: context,
+  );
 }
 
 /// Model-specific factory functions that return properly typed clients.
