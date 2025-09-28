@@ -1,5 +1,29 @@
 import 'gemini_config.dart';
 
+/// Types of models based on their capabilities
+enum ModelType {
+  /// Models that only generate text
+  textOnly,
+
+  /// Models that can generate both text and images
+  imageGeneration,
+
+  /// Models that can analyze images, videos, and generate text
+  multiModal;
+
+  /// Get a human-readable description
+  String get description {
+    switch (this) {
+      case textOnly:
+        return 'Text generation only';
+      case imageGeneration:
+        return 'Text and image generation';
+      case multiModal:
+        return 'Text, image analysis, and multimodal content';
+    }
+  }
+}
+
 /// Represents a Gemini model with its configuration
 class GeminiModel {
   /// Creates a new GeminiModel
@@ -23,7 +47,7 @@ class GeminiModel {
   final String? description;
 
   @override
-  String toString() => name;
+  String toString() => '$name (${type.description})';
 
   @override
   bool operator ==(Object other) {
@@ -79,58 +103,12 @@ class GeminiModels {
     gemini25FlashImagePreview,
   ];
 
-  /// Get models by type
-  static List<GeminiModel> getModelsByType(ModelType type) {
-    return allModels.where((model) => model.type == type).toList();
-  }
-
-  /// Get models by API version
-  static List<GeminiModel> getModelsByApiVersion(ApiVersion apiVersion) {
-    return allModels.where((model) => model.apiVersion == apiVersion).toList();
-  }
-
-  /// Text-only models
-  static List<GeminiModel> get textOnlyModels =>
-      getModelsByType(ModelType.textOnly);
-
-  /// Image generation models
-  static List<GeminiModel> get imageGenerationModels =>
-      getModelsByType(ModelType.imageGeneration);
-
-  /// Multi-modal models
-  static List<GeminiModel> get multiModalModels =>
-      getModelsByType(ModelType.multiModal);
-
   /// Find a model by name
   static GeminiModel? findByName(String name) {
     try {
       return allModels.firstWhere((model) => model.name == name);
     } catch (e) {
       return null;
-    }
-  }
-}
-
-/// Types of models based on their capabilities
-enum ModelType {
-  /// Models that only generate text
-  textOnly,
-
-  /// Models that can generate both text and images
-  imageGeneration,
-
-  /// Models that can analyze images, videos, and generate text
-  multiModal;
-
-  /// Get a human-readable description
-  String get description {
-    switch (this) {
-      case textOnly:
-        return 'Text generation only';
-      case imageGeneration:
-        return 'Text and image generation';
-      case multiModal:
-        return 'Text, image analysis, and multimodal content';
     }
   }
 }

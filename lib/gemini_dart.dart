@@ -9,6 +9,7 @@ export 'src/core/auth.dart';
 export 'src/core/config_validator.dart';
 export 'src/core/configuration_manager.dart';
 export 'src/core/gemini_client.dart';
+export 'src/core/model_specific_client.dart';
 export 'src/core/secure_storage.dart';
 // Export handlers
 export 'src/handlers/handlers.dart';

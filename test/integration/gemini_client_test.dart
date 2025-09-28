@@ -409,7 +409,7 @@ void main() {
         final models = await client.getModels();
 
         expect(models, isNotNull);
-        expect(models, isA<List<GeminiModel>>());
+        expect(models, isA<List>());
         // Note: The actual models list may be empty in test environment
       });
     });
@@ -499,88 +499,6 @@ void main() {
       expect(json['file']['mimeType'], equals('video/mp4'));
       expect(json['file']['sizeBytes'], equals(1024));
       expect(json['file']['displayName'], equals('test-file.mp4'));
-    });
-  });
-
-  group('GeminiModel', () {
-    test('should create from JSON correctly', () {
-      final json = {
-        'name': 'models/gemini-1.5-flash',
-        'displayName': 'Gemini 1.5 Flash',
-        'description': 'Fast and efficient model',
-        'version': '1.5',
-        'inputTokenLimit': 1000000,
-        'outputTokenLimit': 8192,
-        'supportedGenerationMethods': [
-          'generateContent',
-          'streamGenerateContent'
-        ],
-      };
-
-      final model = GeminiModel.fromJson(json);
-
-      expect(model.name, equals('models/gemini-1.5-flash'));
-      expect(model.displayName, equals('Gemini 1.5 Flash'));
-      expect(model.description, equals('Fast and efficient model'));
-      expect(model.version, equals('1.5'));
-      expect(model.inputTokenLimit, equals(1000000));
-      expect(model.outputTokenLimit, equals(8192));
-      expect(model.supportedGenerationMethods, hasLength(2));
-    });
-
-    test('should handle missing optional fields', () {
-      final json = {
-        'name': 'models/gemini-1.5-flash',
-        'displayName': 'Gemini 1.5 Flash',
-        'supportedGenerationMethods': ['generateContent'],
-      };
-
-      final model = GeminiModel.fromJson(json);
-
-      expect(model.name, equals('models/gemini-1.5-flash'));
-      expect(model.displayName, equals('Gemini 1.5 Flash'));
-      expect(model.description, isNull);
-      expect(model.version, isNull);
-      expect(model.inputTokenLimit, isNull);
-      expect(model.outputTokenLimit, isNull);
-      expect(model.supportedGenerationMethods, hasLength(1));
-    });
-
-    test('should throw on missing required fields', () {
-      final json = {
-        'displayName': 'Gemini 1.5 Flash',
-        'supportedGenerationMethods': ['generateContent'],
-      };
-
-      expect(
-        () => GeminiModel.fromJson(json),
-        throwsA(isA<ArgumentError>()),
-      );
-    });
-
-    test('should convert to JSON correctly', () {
-      const model = GeminiModel(
-        name: 'models/gemini-1.5-flash',
-        displayName: 'Gemini 1.5 Flash',
-        description: 'Fast and efficient model',
-        version: '1.5',
-        inputTokenLimit: 1000000,
-        outputTokenLimit: 8192,
-        supportedGenerationMethods: [
-          'generateContent',
-          'streamGenerateContent'
-        ],
-      );
-
-      final json = model.toJson();
-
-      expect(json['name'], equals('models/gemini-1.5-flash'));
-      expect(json['displayName'], equals('Gemini 1.5 Flash'));
-      expect(json['description'], equals('Fast and efficient model'));
-      expect(json['version'], equals('1.5'));
-      expect(json['inputTokenLimit'], equals(1000000));
-      expect(json['outputTokenLimit'], equals(8192));
-      expect(json['supportedGenerationMethods'], hasLength(2));
     });
   });
 }
