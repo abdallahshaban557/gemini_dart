@@ -13,65 +13,37 @@ void main() async {
   }
 
   try {
-    // Demonstrate capability checking
-    print('🔍 === MODEL CAPABILITIES ===');
+    print('🧪 === TESTING createMultiModalPrompt ===');
 
-    // Check capabilities of different models
-    final models = [
-      GeminiModels.gemini15Flash,
-      GeminiModels.gemini15Pro,
-      GeminiModels.gemini25Flash,
-      GeminiModels.gemini25FlashImagePreview,
-    ];
+    // Test 1: Text-only with multimodal model (should work)
+    print('\n1️⃣ Testing text-only with multimodal model...');
+    final multiModalClient = GeminiClient(model: GeminiModels.gemini15Pro);
+    await multiModalClient.initialize(apiKey: apiKey);
 
-    for (final model in models) {
-      print('\n📋 ${model.name}:');
-      print('  - Can generate text: ${model.canGenerateText}');
-      print('  - Can generate images: ${model.canGenerateImages}');
-      print('  - Can analyze images: ${model.canAnalyzeImages}');
-      print('  - Can analyze videos: ${model.canAnalyzeVideos}');
-      print('  - Can process audio: ${model.canProcessAudio}');
-      print('  - Supports multimodal input: ${model.supportsMultiModalInput}');
-      print(
-          '  - Capabilities: ${model.capabilities.map((c) => c.description).join(', ')}');
-    }
+    final textOnlyResponse = await multiModalClient.createMultiModalPrompt(
+      text: 'Write a haiku about coding',
+    );
+    print('✅ Text-only response: ${textOnlyResponse.text}');
 
-    // Find models by capability
-    print('\n🔎 === MODELS BY CAPABILITY ===');
-    print(
-        'Text generation models: ${GeminiModels.textGenerationModels.map((m) => m.name).join(', ')}');
-    print(
-        'Image generation models: ${GeminiModels.imageGenerationModels.map((m) => m.name).join(', ')}');
-    print(
-        'Multimodal models: ${GeminiModels.multiModalModels.map((m) => m.name).join(', ')}');
-
-    // Example 1: Image generation model
-    print('\n🎨 === IMAGE GENERATION MODEL ===');
+    // Test 2: Text-only with image generation model (should work for text)
+    print('\n2️⃣ Testing text-only with image generation model...');
     final imageClient =
         GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
     await imageClient.initialize(apiKey: apiKey);
 
-    // Example 2: Multi-modal analysis model
-    final analysisClient = GeminiClient(model: GeminiModels.gemini15Pro);
-    await analysisClient.initialize(apiKey: apiKey);
-
-    // This would be a compile error - generateImage doesn't exist on AnalysisCapable:
-    // final response = await analysisClient.generateImage(...); // ❌ Compile error!
-
-    final testing = await imageClient.generateImage(
-      prompt: 'Create a variation of this cat with wings',
-      geminiFiles: [
-        await GeminiFile.fromFile(File('example/generated_images/cat.png')),
-      ],
-      config: const GenerationConfig(temperature: 0.8),
+    final imageModelTextResponse = await imageClient.createMultiModalPrompt(
+      text: 'Explain quantum computing in simple terms',
     );
+    print('✅ Image model text response: ${imageModelTextResponse.text}');
 
-    final file = File('example/generated_images/testing_latest_output.png');
-    await file.writeAsBytes(testing.images.first.data);
-    print('💾 Image saved to: ${file.path}');
-
-    //stop here
-    exit(1);
+    // Test 3: Empty call (should fail)
+    print('\n3️⃣ Testing empty call (should fail)...');
+    try {
+      await imageClient.createMultiModalPrompt();
+      print('❌ ERROR: This should have failed!');
+    } catch (e) {
+      print('✅ Correctly caught error: $e');
+    }
   } catch (e) {
     print('❌ Error: $e');
   }
