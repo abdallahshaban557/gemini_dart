@@ -17,6 +17,32 @@ enum ApiVersion {
 
 /// Configuration for the Gemini client
 class GeminiConfig {
+  /// Creates a new GeminiConfig
+  const GeminiConfig({
+    this.baseUrl = 'https://generativelanguage.googleapis.com',
+    this.timeout = const Duration(seconds: 30),
+    this.maxRetries = 3,
+    this.enableLogging = false,
+    this.cacheConfig,
+    this.apiVersion = ApiVersion.v1,
+  });
+
+  /// Create GeminiConfig from JSON
+  factory GeminiConfig.fromJson(Map<String, dynamic> json) => GeminiConfig(
+        baseUrl: json['baseUrl'] as String? ??
+            'https://generativelanguage.googleapis.com',
+        timeout: Duration(seconds: json['timeoutSeconds'] as int? ?? 30),
+        maxRetries: json['maxRetries'] as int? ?? 3,
+        enableLogging: json['enableLogging'] as bool? ?? false,
+        cacheConfig: json['cacheConfig'] != null
+            ? CacheConfig.fromJson(json['cacheConfig'] as Map<String, dynamic>)
+            : null,
+        apiVersion: ApiVersion.values.firstWhere(
+          (version) => version.value == (json['apiVersion'] as String? ?? 'v1'),
+          orElse: () => ApiVersion.v1,
+        ),
+      );
+
   /// Base URL for the Gemini API
   final String baseUrl;
 
@@ -35,45 +61,15 @@ class GeminiConfig {
   /// API version to use
   final ApiVersion apiVersion;
 
-  /// Creates a new GeminiConfig
-  const GeminiConfig({
-    this.baseUrl = 'https://generativelanguage.googleapis.com',
-    this.timeout = const Duration(seconds: 30),
-    this.maxRetries = 3,
-    this.enableLogging = false,
-    this.cacheConfig,
-    this.apiVersion = ApiVersion.v1,
-  });
-
-  /// Create GeminiConfig from JSON
-  factory GeminiConfig.fromJson(Map<String, dynamic> json) {
-    return GeminiConfig(
-      baseUrl: json['baseUrl'] as String? ??
-          'https://generativelanguage.googleapis.com',
-      timeout: Duration(seconds: json['timeoutSeconds'] as int? ?? 30),
-      maxRetries: json['maxRetries'] as int? ?? 3,
-      enableLogging: json['enableLogging'] as bool? ?? false,
-      cacheConfig: json['cacheConfig'] != null
-          ? CacheConfig.fromJson(json['cacheConfig'] as Map<String, dynamic>)
-          : null,
-      apiVersion: ApiVersion.values.firstWhere(
-        (version) => version.value == (json['apiVersion'] as String? ?? 'v1'),
-        orElse: () => ApiVersion.v1,
-      ),
-    );
-  }
-
   /// Convert to JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'baseUrl': baseUrl,
-      'timeoutSeconds': timeout.inSeconds,
-      'maxRetries': maxRetries,
-      'enableLogging': enableLogging,
-      if (cacheConfig != null) 'cacheConfig': cacheConfig!.toJson(),
-      'apiVersion': apiVersion.value,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'baseUrl': baseUrl,
+        'timeoutSeconds': timeout.inSeconds,
+        'maxRetries': maxRetries,
+        'enableLogging': enableLogging,
+        if (cacheConfig != null) 'cacheConfig': cacheConfig!.toJson(),
+        'apiVersion': apiVersion.value,
+      };
 
   /// Create a copy with modified values
   GeminiConfig copyWith({
@@ -119,7 +115,9 @@ class GeminiConfig {
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+    if (identical(this, other)) {
+      return true;
+    }
     return other is GeminiConfig &&
         other.baseUrl == baseUrl &&
         other.timeout == timeout &&

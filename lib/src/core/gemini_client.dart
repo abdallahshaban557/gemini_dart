@@ -5,11 +5,8 @@ import '../handlers/conversation_context.dart';
 import '../handlers/image_handler.dart';
 import '../handlers/multimodal_handler.dart';
 import '../handlers/text_handler.dart';
-import '../models/content.dart';
 import '../models/gemini_config.dart';
-import '../models/gemini_models.dart';
 import '../models/generation_config.dart';
-import '../models/model_interface.dart';
 import '../models/response.dart';
 import '../services/http_service.dart';
 import 'auth.dart';
@@ -99,36 +96,12 @@ class GeminiClient {
   }
 
   /// Generate text from a simple text prompt
-  ///
-  /// Uses the selected model for generation. If no model is selected, uses default text model.
   Future<GeminiResponse> generateText({
     required String prompt,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
     _ensureInitialized();
-
-    if (_selectedModel != null) {
-      // Use the selected model with appropriate handler
-      final modelType = GeminiModels.modelTypes[_selectedModel];
-      switch (modelType) {
-        case ModelType.imageGeneration:
-          // For image generation models, generateText should only generate text
-          return _textHandler!.generateContent(
-              prompt: prompt, config: config, context: context);
-        case ModelType.multiModal:
-          return _multiModalHandler!.generateContent(
-              contents: [TextContent(prompt)],
-              config: config,
-              context: context);
-        case ModelType.textOnly:
-        case null:
-          return _textHandler!.generateContent(
-              prompt: prompt, config: config, context: context);
-      }
-    }
-
-    // Fallback to default text handler
     return _textHandler!
         .generateContent(prompt: prompt, config: config, context: context);
   }
@@ -315,65 +288,6 @@ class GeminiClient {
 
   /// Get the currently selected model name
   String? get selectedModel => _selectedModel;
-
-  /// Check if the selected model supports image generation
-  bool get supportsImageGeneration {
-    if (_selectedModel == null) return false;
-    final modelType = GeminiModels.modelTypes[_selectedModel];
-    return modelType == ModelType.imageGeneration;
-  }
-
-  /// Check if the selected model supports image analysis
-  bool get supportsImageAnalysis {
-    if (_selectedModel == null) return false;
-    final modelType = GeminiModels.modelTypes[_selectedModel];
-    return modelType == ModelType.multiModal ||
-        modelType == ModelType.imageGeneration;
-  }
-
-  /// Check if the selected model supports video analysis
-  bool get supportsVideoAnalysis {
-    if (_selectedModel == null) return false;
-    final modelType = GeminiModels.modelTypes[_selectedModel];
-    return modelType == ModelType.multiModal;
-  }
-
-  /// Select a specific model and get its strongly-typed interface
-  ///
-  /// Example:
-  /// ```dart
-  /// final model = await client.selectModel(modelName: GeminiModels.gemini25FlashImagePreview);
-  /// // Now you have access to image generation methods!
-  /// final response = await model.generateImage(prompt: "A sunset");
-  /// ```
-  Future<ModelInterface> selectModel({required String modelName}) async {
-    _ensureInitialized();
-
-    // Validate the model exists
-    final models = await getModels();
-    models.firstWhere(
-      (m) => m.name == modelName,
-      orElse: () => throw ArgumentError('Model $modelName not found'),
-    );
-
-    // Return the appropriate model interface
-    return _createModelInterface(modelName);
-  }
-
-  /// Create the appropriate model interface based on model name
-  ModelInterface _createModelInterface(String modelName) {
-    final modelType = GeminiModels.modelTypes[modelName];
-
-    switch (modelType) {
-      case ModelType.imageGeneration:
-        return ImageGenerationModel(modelName, this);
-      case ModelType.multiModal:
-        return MultiModalModel(modelName, this);
-      case ModelType.textOnly:
-      case null:
-        return TextOnlyModel(modelName, this);
-    }
-  }
 
   /// Dispose of resources and close connections
   void dispose() {
