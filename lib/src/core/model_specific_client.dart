@@ -284,7 +284,26 @@ class _AnalysisClientImpl implements AnalysisCapable {
       );
 }
 
-/// Factory functions that return the correct client type based on specific models
+/// Model-specific factory functions that return properly typed clients.
+///
+/// These functions ensure that only supported methods appear in IntelliSense:
+/// - Text-only models: Only generateText(), generateTextStream(), etc.
+/// - Image generation models: Text methods + generateImage(), createMultiModalPrompt()
+/// - Multi-modal models: Text methods + analyzeImage(), analyzeDocument(), analyzeVideo()
+///
+/// Usage:
+/// ```dart
+/// // Text-only - NO generateImage method
+/// final client = createGemini15FlashClient();
+///
+/// // Image generation - generateImage method appears
+/// final client = createGemini25FlashImagePreviewClient();
+/// await client.generateImage(prompt: 'A sunset');
+///
+/// // Multi-modal - analysis methods appear, generateImage doesn't
+/// final client = createGemini15ProClient();
+/// await client.analyzeImage(prompt: 'What is this?', images: [...]);
+/// ```
 
 /// Create client for gemini-1.5-flash (text-only)
 BaseGeminiClient createGemini15FlashClient() =>
@@ -301,19 +320,3 @@ ImageGenerationCapable createGemini25FlashImagePreviewClient() =>
 /// Create client for gemini-1.5-pro (multi-modal analysis)
 AnalysisCapable createGemini15ProClient() =>
     _AnalysisClientImpl(GeminiModels.gemini15Pro);
-
-/// Generic factory that returns the appropriate client type
-dynamic createClientForModel(GeminiModel model) {
-  switch (model.name) {
-    case 'gemini-1.5-flash':
-      return createGemini15FlashClient();
-    case 'gemini-2.5-flash':
-      return createGemini25FlashClient();
-    case 'gemini-2.5-flash-image-preview':
-      return createGemini25FlashImagePreviewClient();
-    case 'gemini-1.5-pro':
-      return createGemini15ProClient();
-    default:
-      throw ArgumentError('Unsupported model: ${model.name}');
-  }
-}
