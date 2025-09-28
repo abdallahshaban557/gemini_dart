@@ -160,24 +160,107 @@ class HttpService {
         );
       }
 
+      String buffer = '';
       await for (final chunk
           in streamedResponse.stream.transform(utf8.decoder)) {
-        // Parse Server-Sent Events format
-        final lines = chunk.split('\n');
-        for (final line in lines) {
-          if (line.startsWith('data: ')) {
-            final data = line.substring(6).trim();
-            if (data.isNotEmpty && data != '[DONE]') {
+        // Debug: Print raw chunk data
+        if (_config.enableLogging) {
+          print('Raw streaming chunk: $chunk');
+        }
+
+        // Add chunk to buffer
+        buffer += chunk;
+
+        // Try to parse complete JSON objects from buffer
+        // Look for complete JSON objects (starting with { or [ and properly closed)
+        int braceCount = 0;
+        int bracketCount = 0;
+        bool inString = false;
+        bool escaped = false;
+        int startIndex = 0;
+
+        for (int i = 0; i < buffer.length; i++) {
+          final char = buffer[i];
+
+          if (escaped) {
+            escaped = false;
+            continue;
+          }
+
+          if (char == '\\') {
+            escaped = true;
+            continue;
+          }
+
+          if (char == '"' && !escaped) {
+            inString = !inString;
+            continue;
+          }
+
+          if (!inString) {
+            if (char == '{') {
+              if (braceCount == 0 && bracketCount == 0) {
+                startIndex = i;
+              }
+              braceCount++;
+            } else if (char == '}') {
+              braceCount--;
+            } else if (char == '[') {
+              if (braceCount == 0 && bracketCount == 0) {
+                startIndex = i;
+              }
+              bracketCount++;
+            } else if (char == ']') {
+              bracketCount--;
+            }
+
+            // Found a complete JSON object or array
+            if (braceCount == 0 && bracketCount == 0 && i > startIndex) {
+              final jsonString = buffer.substring(startIndex, i + 1);
+              buffer = buffer.substring(i + 1);
+              i = -1; // Reset loop
+
               try {
-                final json = jsonDecode(data) as Map<String, dynamic>;
-                yield json;
+                final parsed = jsonDecode(jsonString);
+                if (_config.enableLogging) {
+                  print('Parsed complete JSON: $parsed');
+                }
+
+                // Handle both objects and arrays
+                if (parsed is Map<String, dynamic>) {
+                  yield parsed;
+                } else if (parsed is List) {
+                  // If it's an array, yield each object in the array
+                  for (final item in parsed) {
+                    if (item is Map<String, dynamic>) {
+                      yield item;
+                    }
+                  }
+                }
               } catch (e) {
                 if (_config.enableLogging) {
-                  print('Failed to parse streaming data: $data');
+                  print('Failed to parse JSON: $jsonString');
                 }
-                // Continue processing other chunks
               }
             }
+          }
+        }
+      }
+
+      // Process any remaining data in buffer
+      if (buffer.trim().isNotEmpty) {
+        if (_config.enableLogging) {
+          print('Processing remaining buffer: $buffer');
+        }
+        try {
+          final json = jsonDecode(buffer.trim()) as Map<String, dynamic>;
+          if (_config.enableLogging) {
+            print('Parsed final JSON: $json');
+          }
+          yield json;
+        } catch (e) {
+          if (_config.enableLogging) {
+            print('Failed to parse final buffer: $buffer');
           }
         }
       }
