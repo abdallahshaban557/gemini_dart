@@ -15,7 +15,7 @@ class TextHandler {
   /// Creates a new TextHandler
   TextHandler({
     required HttpService httpService,
-    String model = 'gemini-2.5-flash',
+    String model = 'gemini-2.5-pro',
   })  : _httpService = httpService,
         _model = model;
 

@@ -7,6 +7,7 @@ import 'package:test/test.dart';
 import 'package:gemini_dart/src/core/exceptions.dart';
 import 'package:gemini_dart/src/handlers/multimodal_handler.dart';
 import 'package:gemini_dart/src/models/content.dart';
+import 'package:gemini_dart/src/models/gemini_file.dart';
 import 'package:gemini_dart/src/models/generation_config.dart';
 import 'package:gemini_dart/src/models/response.dart';
 import 'package:gemini_dart/src/services/http_service.dart';
@@ -59,7 +60,8 @@ void main() {
             .thenAnswer((_) async => mockResponse);
 
         // Act
-        final result = await multiModalHandler.generateContent(contents: contents);
+        final result =
+            await multiModalHandler.generateContent(contents: contents);
 
         // Assert
         expect(result.text, equals('Multi-modal analysis complete.'));
@@ -179,7 +181,12 @@ void main() {
         // Act
         final result = await multiModalHandler.createPrompt(
           text: 'Analyze these images',
-          images: images,
+          files: images
+              .map((img) => GeminiFile.fromBytesWithMimeType(
+                    bytes: img.data,
+                    mimeType: img.mimeType,
+                  ))
+              .toList(),
         );
 
         // Assert
@@ -214,7 +221,13 @@ void main() {
         // Act
         final result = await multiModalHandler.createPrompt(
           text: 'Analyze these videos',
-          videos: videos,
+          files: videos
+              .map((vid) => GeminiFile.fromBytesWithMimeType(
+                    bytes: Uint8List(0), // Empty data for videos
+                    mimeType: vid.mimeType,
+                    fileName: vid.fileUri.split('/').last,
+                  ))
+              .toList(),
         );
 
         // Assert
@@ -249,8 +262,17 @@ void main() {
         // Act
         final result = await multiModalHandler.createPrompt(
           text: 'Analyze everything',
-          images: images,
-          videos: videos,
+          files: [
+            ...images.map((img) => GeminiFile.fromBytesWithMimeType(
+                  bytes: img.data,
+                  mimeType: img.mimeType,
+                )),
+            ...videos.map((vid) => GeminiFile.fromBytesWithMimeType(
+                  bytes: Uint8List(0), // Empty data for videos
+                  mimeType: vid.mimeType,
+                  fileName: vid.fileUri.split('/').last,
+                )),
+          ],
         );
 
         // Assert
@@ -289,7 +311,14 @@ void main() {
             .thenAnswer((_) async => mockResponse);
 
         // Act
-        final result = await multiModalHandler.createPrompt(images: images);
+        final result = await multiModalHandler.createPrompt(
+          files: images
+              .map((img) => GeminiFile.fromBytesWithMimeType(
+                    bytes: img.data,
+                    mimeType: img.mimeType,
+                  ))
+              .toList(),
+        );
 
         // Assert
         expect(result.text, equals('Image only analysis.'));
@@ -325,8 +354,17 @@ void main() {
         // Act
         final result = await multiModalHandler.analyzeMedia(
           analysisPrompt: 'Perform detailed analysis',
-          images: images,
-          videos: videos,
+          files: [
+            ...images.map((img) => GeminiFile.fromBytesWithMimeType(
+                  bytes: img.data,
+                  mimeType: img.mimeType,
+                )),
+            ...videos.map((vid) => GeminiFile.fromBytesWithMimeType(
+                  bytes: Uint8List(0), // Empty data for videos
+                  mimeType: vid.mimeType,
+                  fileName: vid.fileUri.split('/').last,
+                )),
+          ],
         );
 
         // Assert
@@ -339,6 +377,7 @@ void main() {
         expect(
           () => multiModalHandler.analyzeMedia(
             analysisPrompt: 'Analyze this',
+            files: [],
           ),
           throwsA(isA<GeminiValidationException>()),
         );
@@ -434,7 +473,8 @@ void main() {
             .thenAnswer((_) async => mockResponse);
 
         // The validation should pass for supported types
-        final result = await multiModalHandler.generateContent(contents: contents);
+        final result =
+            await multiModalHandler.generateContent(contents: contents);
         expect(result.text, equals('Test response'));
       });
     });

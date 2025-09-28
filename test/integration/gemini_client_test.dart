@@ -1,12 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:gemini_dart/gemini_dart.dart';
 import 'package:test/test.dart';
-
-import '../../lib/src/core/gemini_client.dart';
-import '../../lib/src/models/gemini_config.dart';
-import '../../lib/src/models/generation_config.dart';
-import '../../lib/src/core/exceptions.dart';
 
 void main() {
   group('GeminiClient Integration Tests', () {
@@ -173,7 +169,7 @@ void main() {
         ]);
 
         final response = await client.createMultiModalPrompt(
-          images: [(data: imageData, mimeType: 'image/png')],
+          files: [GeminiFile(data: imageData, mimeType: 'image/png')],
           config: const GenerationConfig(
             temperature: 0.7,
           ),

@@ -13,6 +13,7 @@ import 'package:gemini_dart/src/handlers/image_handler.dart' as _i11;
 import 'package:gemini_dart/src/handlers/multimodal_handler.dart' as _i13;
 import 'package:gemini_dart/src/handlers/text_handler.dart' as _i7;
 import 'package:gemini_dart/src/models/content.dart' as _i10;
+import 'package:gemini_dart/src/models/gemini_file.dart' as _i14;
 import 'package:gemini_dart/src/models/generation_config.dart' as _i8;
 import 'package:gemini_dart/src/models/response.dart' as _i2;
 import 'package:gemini_dart/src/services/http_service.dart' as _i3;
@@ -739,8 +740,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
   @override
   _i4.Future<_i2.GeminiResponse> createPrompt({
     String? text,
-    List<({_i12.Uint8List data, String mimeType})>? images,
-    List<({String fileUri, String mimeType})>? videos,
+    List<_i14.GeminiFile>? files,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
@@ -750,8 +750,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
           [],
           {
             #text: text,
-            #images: images,
-            #videos: videos,
+            #files: files,
             #config: config,
             #context: context,
           },
@@ -763,8 +762,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
             [],
             {
               #text: text,
-              #images: images,
-              #videos: videos,
+              #files: files,
               #config: config,
               #context: context,
             },
@@ -775,8 +773,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
   @override
   _i4.Future<_i2.GeminiResponse> analyzeMedia({
     required String? analysisPrompt,
-    List<({_i12.Uint8List data, String mimeType})>? images,
-    List<({String fileUri, String mimeType})>? videos,
+    required List<_i14.GeminiFile>? files,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
@@ -786,8 +783,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
           [],
           {
             #analysisPrompt: analysisPrompt,
-            #images: images,
-            #videos: videos,
+            #files: files,
             #config: config,
             #context: context,
           },
@@ -799,8 +795,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
             [],
             {
               #analysisPrompt: analysisPrompt,
-              #images: images,
-              #videos: videos,
+              #files: files,
               #config: config,
               #context: context,
             },
@@ -812,8 +807,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
   _i4.Future<_i2.GeminiResponse> conversationWithMedia(
     _i9.ConversationContext? context, {
     String? text,
-    List<({_i12.Uint8List data, String mimeType})>? images,
-    List<({String fileUri, String mimeType})>? videos,
+    List<_i14.GeminiFile>? files,
     _i8.GenerationConfig? config,
   }) =>
       (super.noSuchMethod(
@@ -822,8 +816,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
           [context],
           {
             #text: text,
-            #images: images,
-            #videos: videos,
+            #files: files,
             #config: config,
           },
         ),
@@ -834,8 +827,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
             [context],
             {
               #text: text,
-              #images: images,
-              #videos: videos,
+              #files: files,
               #config: config,
             },
           ),

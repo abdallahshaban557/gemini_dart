@@ -12,6 +12,7 @@ dependencies:
 ```
 
 Then run:
+
 ```bash
 dart pub get
 # or for Flutter
@@ -100,7 +101,7 @@ void main() async {
 
   // Analyze an image
   final imageFile = await GeminiFile.fromFile(File('path/to/image.jpg'));
-  
+
   final response = await client.createMultiModalPrompt(
     text: 'What do you see in this image? Describe it in detail.',
     files: [imageFile],
@@ -197,5 +198,6 @@ Check the `example/` directory for more comprehensive examples:
 ## Support
 
 For issues and questions:
+
 - GitHub Issues: https://github.com/abdallahshaban557/gemini_dart/issues
 - Documentation: https://pub.dev/packages/gemini_dart
