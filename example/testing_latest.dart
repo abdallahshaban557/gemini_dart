@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:gemini_dart/gemini_dart.dart';
+import 'package:gemini_dart/src/models/gemini_file.dart';
 
 /// Example using model selection in constructor
 void main() async {
@@ -15,36 +16,20 @@ void main() async {
   try {
     // Example 1: Image generation model
     print('🎨 === IMAGE GENERATION MODEL ===');
-    final imageClient =
-        GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
+    final imageClient = GeminiClient(model: GeminiModels.gemini15Flash);
     await imageClient.initialize(apiKey: apiKey);
 
     final testing = await imageClient.generateImage(
-      prompt:
-          'Create a variation of this cat with magical sparkles and rainbow colors',
-      files: [
-        (
-          data: File('example/generated_images/cat.png').readAsBytesSync(),
-          mimeType: 'image/png'
-        ),
+      prompt: 'Create a variation of this cat with wings',
+      geminiFiles: [
+        await GeminiFile.fromFile(File('example/generated_images/cat.png')),
       ],
-      config: const GenerationConfig(
-        temperature: 0.8,
-      ),
+      config: const GenerationConfig(temperature: 0.8),
     );
 
-    print('📝 Response text: ${testing.text}');
-    print('📊 Number of images: ${testing.images.length}');
-
-    if (testing.images.isNotEmpty) {
-      print('🖼️ First image size: ${testing.images.first.data.length} bytes');
-      // Save the image
-      final file = File('example/generated_images/testing_latest_output.png');
-      await file.writeAsBytes(testing.images.first.data);
-      print('💾 Image saved to: ${file.path}');
-    } else {
-      print('⚠️ No images found in response');
-    }
+    final file = File('example/generated_images/testing_latest_output.png');
+    await file.writeAsBytes(testing.images.first.data);
+    print('💾 Image saved to: ${file.path}');
 
     //stop here
     exit(1);
