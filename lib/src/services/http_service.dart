@@ -12,11 +12,6 @@ import '../models/gemini_config.dart';
 
 /// HTTP service for making requests to the Gemini API
 class HttpService {
-  final http.Client _client;
-  final AuthenticationHandler _auth;
-  final GeminiConfig _config;
-  final RetryConfig _retryConfig;
-
   /// Creates a new HttpService
   HttpService({
     required AuthenticationHandler auth,
@@ -30,6 +25,10 @@ class HttpService {
     _config.validate();
     _retryConfig.validate();
   }
+  final http.Client _client;
+  final AuthenticationHandler _auth;
+  final GeminiConfig _config;
+  final RetryConfig _retryConfig;
 
   /// Makes a GET request to the specified endpoint
   Future<Map<String, dynamic>> get(

@@ -22,14 +22,6 @@ class GeminiModels {
     gemini25Flash,
     gemini25FlashImagePreview,
   ];
-
-  /// Model type mappings
-  static const Map<String, ModelType> modelTypes = {
-    gemini15Flash: ModelType.textOnly,
-    gemini15Pro: ModelType.multiModal,
-    gemini25Flash: ModelType.textOnly,
-    gemini25FlashImagePreview: ModelType.imageGeneration,
-  };
 }
 
 /// Types of models based on their capabilities
