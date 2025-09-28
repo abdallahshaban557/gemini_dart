@@ -13,10 +13,6 @@ abstract class SecureStorageInterface {
 /// Basic secure storage implementation
 /// Note: In production, consider using flutter_secure_storage for mobile apps
 class SecureStorage implements SecureStorageInterface {
-  static const String _storageFileName = '.gemini_secure_storage';
-  late final String _storagePath;
-  Map<String, String>? _cache;
-
   SecureStorage({String? customPath}) {
     if (customPath != null) {
       _storagePath = customPath;
@@ -26,10 +22,15 @@ class SecureStorage implements SecureStorageInterface {
       _storagePath = path.join(tempDir.path, _storageFileName);
     }
   }
+  static const String _storageFileName = '.gemini_secure_storage';
+  late final String _storagePath;
+  Map<String, String>? _cache;
 
   /// Loads the storage cache from file
   Future<Map<String, String>> _loadCache() async {
-    if (_cache != null) return _cache!;
+    if (_cache != null) {
+      return _cache!;
+    }
 
     final file = File(_storagePath);
     if (!await file.exists()) {
@@ -106,9 +107,7 @@ class InMemorySecureStorage implements SecureStorageInterface {
   }
 
   @override
-  Future<String?> retrieve(String key) async {
-    return _storage[key];
-  }
+  Future<String?> retrieve(String key) async => _storage[key];
 
   @override
   Future<void> delete(String key) async {
