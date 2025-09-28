@@ -178,7 +178,7 @@ class _ImageGenerationClientImpl implements ImageGenerationCapable {
   }) =>
       _client.createMultiModalPrompt(
         text: text,
-        images: images?.map((f) => f.toApiFormat()).toList(),
+        files: images,
         config: config,
         context: context,
       );
@@ -232,7 +232,7 @@ class _AnalysisClientImpl implements AnalysisCapable {
   }) =>
       _client.createMultiModalPrompt(
         text: prompt,
-        images: images.map((f) => f.toApiFormat()).toList(),
+        files: images,
         config: config,
         context: context,
       );
@@ -246,7 +246,7 @@ class _AnalysisClientImpl implements AnalysisCapable {
   }) =>
       _client.createMultiModalPrompt(
         text: prompt,
-        images: documents.map((f) => f.toApiFormat()).toList(),
+        files: documents,
         config: config,
         context: context,
       );
@@ -260,7 +260,7 @@ class _AnalysisClientImpl implements AnalysisCapable {
   }) =>
       _client.createMultiModalPrompt(
         text: prompt,
-        videos: videos.map((f) => (fileUri: '', mimeType: f.mimeType)).toList(),
+        files: videos,
         config: config,
         context: context,
       );
@@ -275,9 +275,7 @@ class _AnalysisClientImpl implements AnalysisCapable {
   }) =>
       _client.createMultiModalPrompt(
         text: text,
-        images: images?.map((f) => f.toApiFormat()).toList(),
-        videos:
-            videos?.map((f) => (fileUri: '', mimeType: f.mimeType)).toList(),
+        files: [...?images, ...?videos],
         config: config,
         context: context,
       );

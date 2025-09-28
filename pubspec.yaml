@@ -1,9 +1,9 @@
 name: gemini_dart
 description: A comprehensive Dart package for integrating Google's Gemini AI models with support for text, image, and video processing.
 version: 0.1.0
-homepage: https://github.com/your-username/gemini_dart
-repository: https://github.com/your-username/gemini_dart
-issue_tracker: https://github.com/your-username/gemini_dart/issues
+homepage: https://github.com/abdallahshaban557/gemini_dart
+repository: https://github.com/abdallahshaban557/gemini_dart
+issue_tracker: https://github.com/abdallahshaban557/gemini_dart/issues
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
