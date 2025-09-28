@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 // ✅ Single import - GeminiFile now available from main export!
@@ -20,18 +19,12 @@ void main() async {
         GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
     await imageClient.initialize(apiKey: apiKey);
 
-    final testing_again =
-        createGemini15ProClient();
-    await testing_again.initialize(apiKey: apiKey);
-    testing_again.
-
-    final testing_again_response = await testing_again.generateImage(
-      prompt: 'Create a variation of this cat with wings',
-      geminiFiles: [
-        await GeminiFile.fromFile(File('example/generated_images/cat.png')),
-      ],
-      config: const GenerationConfig(temperature: 0.8),
-    );
+    // Example 2: Multi-modal analysis model (can't generate images)
+    final analysisClient = createGemini15ProClient();
+    await analysisClient.initialize(apiKey: apiKey);
+    
+    // This would be a compile error - generateImage doesn't exist on AnalysisCapable:
+    // final response = await analysisClient.generateImage(...); // ❌ Compile error!
 
     final testing = await imageClient.generateImage(
       prompt: 'Create a variation of this cat with wings',
