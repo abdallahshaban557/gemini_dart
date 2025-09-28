@@ -3,7 +3,7 @@ import 'dart:io';
 // ✅ Single import - GeminiFile now available from main export!
 import 'package:gemini_dart/gemini_dart.dart';
 
-/// Example using model selection in constructor
+/// Example demonstrating the new capability-based model system
 void main() async {
   // Get your API key from environment
   final apiKey = Platform.environment['GEMINI_API_KEY'];
@@ -13,16 +13,48 @@ void main() async {
   }
 
   try {
+    // Demonstrate capability checking
+    print('🔍 === MODEL CAPABILITIES ===');
+
+    // Check capabilities of different models
+    final models = [
+      GeminiModels.gemini15Flash,
+      GeminiModels.gemini15Pro,
+      GeminiModels.gemini25Flash,
+      GeminiModels.gemini25FlashImagePreview,
+    ];
+
+    for (final model in models) {
+      print('\n📋 ${model.name}:');
+      print('  - Can generate text: ${model.canGenerateText}');
+      print('  - Can generate images: ${model.canGenerateImages}');
+      print('  - Can analyze images: ${model.canAnalyzeImages}');
+      print('  - Can analyze videos: ${model.canAnalyzeVideos}');
+      print('  - Can process audio: ${model.canProcessAudio}');
+      print('  - Supports multimodal input: ${model.supportsMultiModalInput}');
+      print(
+          '  - Capabilities: ${model.capabilities.map((c) => c.description).join(', ')}');
+    }
+
+    // Find models by capability
+    print('\n🔎 === MODELS BY CAPABILITY ===');
+    print(
+        'Text generation models: ${GeminiModels.textGenerationModels.map((m) => m.name).join(', ')}');
+    print(
+        'Image generation models: ${GeminiModels.imageGenerationModels.map((m) => m.name).join(', ')}');
+    print(
+        'Multimodal models: ${GeminiModels.multiModalModels.map((m) => m.name).join(', ')}');
+
     // Example 1: Image generation model
-    print('🎨 === IMAGE GENERATION MODEL ===');
+    print('\n🎨 === IMAGE GENERATION MODEL ===');
     final imageClient =
         GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
     await imageClient.initialize(apiKey: apiKey);
 
-    // Example 2: Multi-modal analysis model (can't generate images)
-    final analysisClient = createGemini15ProClient();
+    // Example 2: Multi-modal analysis model
+    final analysisClient = GeminiClient(model: GeminiModels.gemini15Pro);
     await analysisClient.initialize(apiKey: apiKey);
-    
+
     // This would be a compile error - generateImage doesn't exist on AnalysisCapable:
     // final response = await analysisClient.generateImage(...); // ❌ Compile error!
 
