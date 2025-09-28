@@ -22,7 +22,7 @@ void main() async {
     final testing = await imageClient.generateImage(
       prompt:
           'Create a variation of this cat with magical sparkles and rainbow colors',
-      images: [
+      files: [
         (
           data: File('example/generated_images/cat.png').readAsBytesSync(),
           mimeType: 'image/png'

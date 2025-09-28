@@ -7,6 +7,7 @@ import '../handlers/image_handler.dart';
 import '../handlers/multimodal_handler.dart';
 import '../handlers/text_handler.dart';
 import '../models/gemini_config.dart';
+import '../models/gemini_file.dart';
 import '../models/generation_config.dart';
 import '../models/response.dart';
 import '../services/http_service.dart';
@@ -118,25 +119,43 @@ class GeminiClient {
     yield* _textHandler!.generateContentStream(prompt: prompt, config: config);
   }
 
-  /// Generate an image from a text prompt with optional input images
+  /// Generate an image from a text prompt with optional input files
   ///
   /// This method uses Gemini's image generation capabilities to create images
-  /// from text descriptions, optionally using input images as reference.
+  /// from text descriptions, optionally using input files as reference.
   ///
   /// Examples:
   /// ```dart
   /// // Text-only image generation
   /// final response = await client.generateImage(prompt: 'A sunset over mountains');
   ///
-  /// // Image-to-image generation with reference
+  /// // Using GeminiFile objects (recommended)
+  /// final imageFile = await GeminiFile.fromFile(File('image.png'));
   /// final response = await client.generateImage(
   ///   prompt: 'Make this image more colorful',
-  ///   images: [(data: imageBytes, mimeType: 'image/png')],
+  ///   geminiFiles: [imageFile], // Direct usage - no toApiFormat needed!
+  /// );
+  ///
+  /// // Multiple file types
+  /// final files = [
+  ///   await GeminiFile.fromFile(File('document.pdf')),
+  ///   await GeminiFile.fromFile(File('audio.mp3')),
+  /// ];
+  /// final response = await client.generateImage(
+  ///   prompt: 'Create artwork combining these elements',
+  ///   geminiFiles: files, // Clean and simple!
+  /// );
+  ///
+  /// // Legacy raw format (still supported)
+  /// final response = await client.generateImage(
+  ///   prompt: 'Transform this',
+  ///   files: [(data: imageBytes, mimeType: 'image/png')],
   /// );
   /// ```
   Future<GeminiResponse> generateImage({
     required String prompt,
-    List<({Uint8List data, String mimeType})>? images,
+    List<GeminiFile>? geminiFiles,
+    List<({Uint8List data, String mimeType})>? files,
     GenerationConfig? config,
     ConversationContext? context,
   }) async {
@@ -149,25 +168,48 @@ class GeminiClient {
         config: _config.copyWith(apiVersion: ApiVersion.v1beta),
       );
 
-      // Build the content parts (text + optional images)
+      // Build the content parts (text + optional files)
       final parts = <Map<String, dynamic>>[
         {'text': prompt},
       ];
 
-      // Add images if provided
-      if (images != null) {
-        for (final image in images) {
+      // Add GeminiFile objects if provided (recommended)
+      if (geminiFiles != null) {
+        for (final geminiFile in geminiFiles) {
           parts.add({
             'inline_data': {
-              'mime_type': image.mimeType,
-              'data': base64Encode(image.data),
+              'mime_type': geminiFile.mimeType,
+              'data': base64Encode(geminiFile.data),
             }
           });
         }
       }
 
+      // Add raw files if provided (legacy support)
+      if (files != null) {
+        for (final file in files) {
+          // Validate file type
+          if (!_isSupportedFileType(file.mimeType)) {
+            throw ArgumentError('Unsupported file type: ${file.mimeType}. '
+                'Supported types: images (JPEG, PNG, WebP, GIF), '
+                'documents (PDF), audio (MP3, WAV, FLAC), '
+                'video (MP4, MOV, AVI, WebM)');
+          }
+
+          parts.add({
+            'inline_data': {
+              'mime_type': file.mimeType,
+              'data': base64Encode(file.data),
+            }
+          });
+        }
+      }
+
+      // Use the selected model or fall back to image generation model
+      final modelToUse = _selectedModel ?? 'gemini-2.5-flash-image-preview';
+
       final response = await imageGenService.post(
-        'models/gemini-2.5-flash-image-preview:generateContent',
+        'models/$modelToUse:generateContent',
         body: {
           'contents': [
             {
@@ -323,6 +365,36 @@ class GeminiClient {
         {},
       );
     }
+  }
+
+  /// Check if the file type is supported for multimodal input
+  bool _isSupportedFileType(String mimeType) {
+    const supportedTypes = {
+      // Images
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'image/gif',
+
+      // Documents
+      'application/pdf',
+
+      // Audio
+      'audio/mp3',
+      'audio/mpeg',
+      'audio/wav',
+      'audio/flac',
+
+      // Video
+      'video/mp4',
+      'video/mov',
+      'video/avi',
+      'video/webm',
+      'video/quicktime',
+    };
+
+    return supportedTypes.contains(mimeType.toLowerCase());
   }
 }
 
