@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import '../core/exceptions.dart';
 import '../models/content.dart';
+import '../models/gemini_file.dart';
 import '../models/generation_config.dart';
 import '../models/response.dart';
 import '../services/http_service.dart';
@@ -119,9 +120,10 @@ class MultiModalHandler {
     }
   }
 
-  /// Create a multi-modal prompt with text and images
+  /// Create a multi-modal prompt with text and files
   Future<GeminiResponse> createPrompt({
     String? text,
+    List<GeminiFile>? files,
     List<({Uint8List data, String mimeType})>? images,
     List<({String fileUri, String mimeType})>? videos,
     GenerationConfig? config,
@@ -134,7 +136,32 @@ class MultiModalHandler {
       contents.add(TextContent(text.trim()));
     }
 
-    // Add images if provided
+    // Add GeminiFile objects if provided (recommended)
+    if (files != null) {
+      for (final file in files) {
+        if (file.isImage) {
+          ImageUtils.validateImage(file.data, file.mimeType);
+          contents.add(ImageContent(file.data, file.mimeType));
+        } else if (file.isVideo) {
+          // For videos, we need to handle both local files and URIs
+          // If it's a local file, we might need to upload it first
+          // For now, we'll create VideoContent with a placeholder URI
+          // This would need to be enhanced based on your video handling strategy
+          final fileName = file.fileName ?? 'unknown_video';
+          contents.add(VideoContent('file://$fileName', file.mimeType));
+        } else if (file.isAudio) {
+          // Handle audio files - similar to video
+          final fileName = file.fileName ?? 'unknown_audio';
+          contents.add(VideoContent('file://$fileName', file.mimeType));
+        } else {
+          // Handle other file types (PDFs, etc.)
+          ImageUtils.validateImage(file.data, file.mimeType);
+          contents.add(ImageContent(file.data, file.mimeType));
+        }
+      }
+    }
+
+    // Add legacy images if provided (for backward compatibility)
     if (images != null) {
       for (final image in images) {
         ImageUtils.validateImage(image.data, image.mimeType);
@@ -142,7 +169,7 @@ class MultiModalHandler {
       }
     }
 
-    // Add videos if provided
+    // Add legacy videos if provided (for backward compatibility)
     if (videos != null) {
       for (final video in videos) {
         contents.add(VideoContent(video.fileUri, video.mimeType));
