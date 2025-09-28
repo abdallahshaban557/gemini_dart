@@ -8,7 +8,7 @@ import '../handlers/multimodal_handler.dart';
 import '../handlers/text_handler.dart';
 import '../models/gemini_config.dart';
 import '../models/gemini_file.dart';
-import '../models/gemini_models.dart';
+import '../models/gemini_models_simple.dart';
 import '../models/generation_config.dart';
 import '../models/response.dart';
 import '../services/http_service.dart';
