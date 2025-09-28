@@ -5,7 +5,6 @@ import '../models/response.dart';
 import '../models/gemini_file.dart';
 import '../handlers/conversation_context.dart';
 import 'gemini_client.dart';
-import 'retry_config.dart';
 
 /// Base client interface - all models support these methods
 abstract class BaseGeminiClient {
