@@ -20,6 +20,19 @@ void main() async {
         GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
     await imageClient.initialize(apiKey: apiKey);
 
+    final testing_again =
+        createGemini15ProClient();
+    await testing_again.initialize(apiKey: apiKey);
+    testing_again.
+
+    final testing_again_response = await testing_again.generateImage(
+      prompt: 'Create a variation of this cat with wings',
+      geminiFiles: [
+        await GeminiFile.fromFile(File('example/generated_images/cat.png')),
+      ],
+      config: const GenerationConfig(temperature: 0.8),
+    );
+
     final testing = await imageClient.generateImage(
       prompt: 'Create a variation of this cat with wings',
       geminiFiles: [
