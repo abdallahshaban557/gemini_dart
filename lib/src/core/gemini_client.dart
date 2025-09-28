@@ -121,8 +121,7 @@ class GeminiClient {
     ConversationContext? context,
   }) async {
     _ensureInitialized();
-
-    // Note: API version is already set during initialization
+    _validateModelCapability(ModelCapability.textGeneration, 'generateText');
 
     return _textHandler!
         .generateContent(prompt: prompt, config: config, context: context);
@@ -136,6 +135,8 @@ class GeminiClient {
     GenerationConfig? config,
   }) async* {
     _ensureInitialized();
+    _validateModelCapability(
+        ModelCapability.textGeneration, 'generateTextStream');
     yield* _textHandler!.generateContentStream(prompt: prompt, config: config);
   }
 
@@ -181,10 +182,17 @@ class GeminiClient {
   }) async {
     _ensureInitialized();
 
+    // Validate that the model can generate images
+    final modelToUse = _selectedModel ?? GeminiModels.gemini25FlashImagePreview;
+    if (!modelToUse.canGenerateImages) {
+      throw GeminiValidationException(
+        'Model ${modelToUse.name} does not support image generation. '
+        'Use a model with image generation capability like ${GeminiModels.gemini25FlashImagePreview.name}.',
+        {'model': 'Image generation not supported by this model'},
+      );
+    }
+
     try {
-      // Determine model and API version
-      final modelToUse =
-          _selectedModel ?? GeminiModels.gemini25FlashImagePreview;
       final apiVersionToUse = modelToUse.apiVersion;
 
       // Use the model's required API version
@@ -270,6 +278,9 @@ class GeminiClient {
     ConversationContext? context,
   }) async {
     _ensureInitialized();
+    _validateModelCapability(
+        ModelCapability.multiModalInput, 'createMultiModalPrompt');
+
     return _multiModalHandler!.createPrompt(
       text: text,
       images: images,
@@ -370,6 +381,27 @@ class GeminiClient {
       throw const GeminiValidationException(
         'Client not initialized. Call initialize() first.',
         {},
+      );
+    }
+  }
+
+  /// Validate that the current model has the required capability
+  void _validateModelCapability(ModelCapability capability, String methodName) {
+    final model = _selectedModel;
+    if (model == null) {
+      // If no model is selected, we'll use the default which should support the capability
+      return;
+    }
+
+    if (!model.hasCapability(capability)) {
+      final supportedModels = GeminiModels.getModelsWithCapability(capability)
+          .map((m) => m.name)
+          .join(', ');
+
+      throw GeminiValidationException(
+        'Model ${model.name} does not support ${capability.description}. '
+        'Use a model with this capability: $supportedModels',
+        {'model': '${capability.description} not supported by this model'},
       );
     }
   }
