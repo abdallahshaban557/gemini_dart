@@ -31,6 +31,14 @@ abstract class Content {
             // Convert base64 to bytes
             final bytes = base64Decode(imageData);
             images.add(ImageContent(bytes, mimeType));
+          } else if (partMap.containsKey('inline_data')) {
+            final inlineData = partMap['inline_data'] as Map<String, dynamic>;
+            final imageData = inlineData['data'] as String;
+            final mimeType = inlineData['mime_type'] as String;
+
+            // Convert base64 to bytes
+            final bytes = base64Decode(imageData);
+            images.add(ImageContent(bytes, mimeType));
           }
         }
 

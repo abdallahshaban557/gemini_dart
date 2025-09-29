@@ -20,21 +20,21 @@ void main() async {
     final client = GeminiClient(model: GeminiModels.gemini25FlashImagePreview);
     await client.initialize(apiKey: apiKey);
 
-    //get file data from file
-    final file = File('example/generated_images/cat.png');
-    final fileData = await file.readAsBytes();
-
     final response = await client.generateImage(
-      prompt: 'add wings and have it be flying with a sunset background',
-      geminiFiles: [GeminiFile(data: fileData, fileType: GeminiFileType.png)],
+      prompt: 'Create a beautiful sunset over mountains',
     );
 
-    //save image to file
-    final file1 = File('example/generated_images/cat_with_wings.png');
-    await file1.writeAsBytes(response.firstImage!.data);
-    print('💾 Image saved to: ${file.path}');
+    if (response.firstImage != null) {
+      //save image to file
+      final file = File('example/generated_images/sunset_mountains1.png');
+      await file.writeAsBytes(response.firstImage!.data);
+      print('💾 Image saved to: ${file.path}');
+      print('🎉 Image generation successful!');
+    } else {
+      print('❌ No image found in response');
+    }
 
-    print(response.text);
+    print('Response text: ${response.text}');
   } catch (e) {
     print('❌ Error: $e');
   }

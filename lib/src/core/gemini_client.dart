@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -74,7 +73,7 @@ class GeminiClient {
     // Pass model name to handlers
     final modelName = _selectedModel?.name ?? 'gemini-2.5-flash';
     _textHandler = TextHandler(httpService: _httpService!, model: modelName);
-    _imageHandler = ImageHandler(httpService: _httpService!);
+    _imageHandler = ImageHandler(httpService: _httpService!, model: modelName);
     _multiModalHandler = MultiModalHandler(httpService: _httpService!);
   }
 
@@ -181,90 +180,15 @@ class GeminiClient {
     ConversationContext? context,
   }) async {
     _ensureInitialized();
+    _validateModelCapability(ModelCapability.imageGeneration, 'generateImage');
 
-    // Validate that the model can generate images
-    final modelToUse = _selectedModel ?? GeminiModels.gemini25FlashImagePreview;
-    if (!modelToUse.canGenerateImages) {
-      throw GeminiValidationException(
-        'Model ${modelToUse.name} does not support image generation. '
-        'Use a model with image generation capability like ${GeminiModels.gemini25FlashImagePreview.name}.',
-        {'model': 'Image generation not supported by this model'},
-      );
-    }
-
-    try {
-      final apiVersionToUse = modelToUse.apiVersion;
-
-      // Use the model's required API version
-      final imageGenService = HttpService(
-        auth: _auth!,
-        config: _config.copyWith(apiVersion: apiVersionToUse),
-      );
-
-      // Build the content parts (text + optional files)
-      final parts = <Map<String, dynamic>>[
-        {'text': prompt},
-      ];
-
-      // Add GeminiFile objects if provided (recommended)
-      if (geminiFiles != null) {
-        for (final geminiFile in geminiFiles) {
-          parts.add({
-            'inline_data': {
-              'mime_type': geminiFile.mimeType,
-              'data': base64Encode(geminiFile.data),
-            }
-          });
-        }
-      }
-
-      // Add raw files if provided (legacy support)
-      if (files != null) {
-        for (final file in files) {
-          // Validate file type
-          if (!_isSupportedFileType(file.mimeType)) {
-            throw ArgumentError('Unsupported file type: ${file.mimeType}. '
-                'Supported types: images (JPEG, PNG, WebP, GIF), '
-                'documents (PDF), audio (MP3, WAV, FLAC), '
-                'video (MP4, MOV, AVI, WebM)');
-          }
-
-          parts.add({
-            'inline_data': {
-              'mime_type': file.mimeType,
-              'data': base64Encode(file.data),
-            }
-          });
-        }
-      }
-
-      final response = await imageGenService.post(
-        'models/${modelToUse.name}:generateContent',
-        body: {
-          'contents': [
-            {
-              'parts': parts,
-            }
-          ],
-          if (config != null) 'generationConfig': config.toJson(),
-        },
-      );
-
-      final geminiResponse = GeminiResponse.fromJson(response);
-
-      // Add to conversation context if provided
-      if (context != null) {
-        context.addUserMessage(prompt);
-        context.addModelResponse(geminiResponse);
-      }
-
-      return geminiResponse;
-    } catch (e) {
-      throw GeminiNetworkException(
-        'Failed to generate image: ${e.toString()}',
-        originalError: e,
-      );
-    }
+    return _imageHandler!.generateImage(
+      prompt: prompt,
+      geminiFiles: geminiFiles,
+      files: files,
+      config: config,
+      context: context,
+    );
   }
 
   /// Create a multi-modal prompt with text and files
@@ -429,36 +353,6 @@ class GeminiClient {
         {'model': '${capability.description} not supported by this model'},
       );
     }
-  }
-
-  /// Check if the file type is supported for multimodal input
-  bool _isSupportedFileType(String mimeType) {
-    const supportedTypes = {
-      // Images
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'image/webp',
-      'image/gif',
-
-      // Documents
-      'application/pdf',
-
-      // Audio
-      'audio/mp3',
-      'audio/mpeg',
-      'audio/wav',
-      'audio/flac',
-
-      // Video
-      'video/mp4',
-      'video/mov',
-      'video/avi',
-      'video/webm',
-      'video/quicktime',
-    };
-
-    return supportedTypes.contains(mimeType.toLowerCase());
   }
 }
 

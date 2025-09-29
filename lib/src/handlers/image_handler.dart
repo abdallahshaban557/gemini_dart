@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import '../core/exceptions.dart';
 import '../models/content.dart';
+import '../models/gemini_file.dart';
 import '../models/generation_config.dart';
 import '../models/response.dart';
 import '../services/http_service.dart';
@@ -252,6 +254,45 @@ class ImageHandler {
     );
   }
 
+  /// Generate an image from a text prompt with optional input files
+  Future<GeminiResponse> generateImage({
+    required String prompt,
+    List<GeminiFile>? geminiFiles,
+    List<({Uint8List data, String mimeType})>? files,
+    GenerationConfig? config,
+    ConversationContext? context,
+  }) async {
+    if (prompt.trim().isEmpty) {
+      throw GeminiValidationException(
+        'Prompt cannot be empty',
+        {'prompt': 'Prompt is required and cannot be empty'},
+      );
+    }
+
+    // Build content list
+    final contents = <Content>[];
+
+    // Add text prompt
+    contents.add(TextContent(prompt));
+
+    // Add GeminiFile objects if provided (recommended)
+    if (geminiFiles != null) {
+      for (final geminiFile in geminiFiles) {
+        contents.add(ImageContent(geminiFile.data, geminiFile.mimeType));
+      }
+    }
+
+    // Add raw files if provided (legacy support)
+    if (files != null) {
+      for (final file in files) {
+        contents.add(ImageContent(file.data, file.mimeType));
+      }
+    }
+
+    return generateFromContent(
+        contents: contents, config: config, context: context);
+  }
+
   /// Build the request body for API calls
   Map<String, dynamic> _buildRequestBody(
     List<Content> contents,
@@ -293,7 +334,7 @@ class ImageHandler {
       return {
         'inlineData': {
           'mimeType': content.mimeType,
-          'data': content.data,
+          'data': base64Encode(content.data),
         }
       };
     } else if (content is VideoContent) {
