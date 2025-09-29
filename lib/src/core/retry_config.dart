@@ -1,10 +1,19 @@
-import 'dart:io';
+import 'platform_imports.dart';
 import 'dart:math';
 
 import 'exceptions.dart';
 
 /// Configuration for retry behavior
 class RetryConfig {
+  static const List<Type> _defaultRetryableExceptions = [
+    PlatformSocketException,
+    PlatformHttpException,
+    GeminiNetworkException,
+    GeminiTimeoutException,
+    GeminiRateLimitException,
+    GeminiServerException,
+  ];
+
   /// Maximum number of retry attempts
   final int maxAttempts;
 
@@ -24,19 +33,12 @@ class RetryConfig {
   final List<int> retryableStatusCodes;
 
   /// Creates a new RetryConfig
-  const RetryConfig({
+  RetryConfig({
     this.maxAttempts = 3,
     this.initialDelay = const Duration(seconds: 1),
     this.backoffMultiplier = 2.0,
     this.maxDelay = const Duration(seconds: 30),
-    this.retryableExceptions = const [
-      SocketException,
-      HttpException,
-      GeminiNetworkException,
-      GeminiTimeoutException,
-      GeminiRateLimitException,
-      GeminiServerException,
-    ],
+    this.retryableExceptions = _defaultRetryableExceptions,
     this.retryableStatusCodes = const [
       408, // Request Timeout
       429, // Too Many Requests
@@ -57,14 +59,14 @@ class RetryConfig {
         retryableStatusCodes = const [];
 
   /// Creates a RetryConfig optimized for aggressive retries
-  const RetryConfig.aggressive()
+  RetryConfig.aggressive()
       : maxAttempts = 5,
         initialDelay = const Duration(milliseconds: 500),
         backoffMultiplier = 1.5,
         maxDelay = const Duration(seconds: 10),
-        retryableExceptions = const [
-          SocketException,
-          HttpException,
+        retryableExceptions = [
+          PlatformSocketException,
+          PlatformHttpException,
           GeminiNetworkException,
           GeminiTimeoutException,
           GeminiRateLimitException,
@@ -80,13 +82,13 @@ class RetryConfig {
         ];
 
   /// Creates a RetryConfig optimized for conservative retries
-  const RetryConfig.conservative()
+  RetryConfig.conservative()
       : maxAttempts = 2,
         initialDelay = const Duration(seconds: 2),
         backoffMultiplier = 3.0,
         maxDelay = const Duration(minutes: 1),
-        retryableExceptions = const [
-          SocketException,
+        retryableExceptions = [
+          PlatformSocketException,
           GeminiNetworkException,
           GeminiTimeoutException,
           GeminiServerException,

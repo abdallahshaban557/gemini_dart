@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'platform_imports.dart';
 import 'dart:typed_data';
 
 import '../handlers/conversation_context.dart';
@@ -150,7 +150,7 @@ class GeminiClient {
   /// final response = await client.generateImage(prompt: 'A sunset over mountains');
   ///
   /// // Using GeminiFile objects (recommended)
-  /// final imageFile = await GeminiFile.fromFile(File('image.png'));
+  /// final imageFile = await GeminiFile.fromFile(PlatformFile('image.png'));
   /// final response = await client.generateImage(
   ///   prompt: 'Make this image more colorful',
   ///   geminiFiles: [imageFile], // Direct usage - no toApiFormat needed!
@@ -158,7 +158,7 @@ class GeminiClient {
   ///
   /// // Multiple file types
   /// final files = [
-  ///   await GeminiFile.fromFile(File('document.pdf')),
+  ///   await GeminiFile.fromFile(PlatformFile('document.pdf')),
   ///   await GeminiFile.fromFile(File('audio.mp3')),
   /// ];
   /// final response = await client.generateImage(
@@ -203,7 +203,7 @@ class GeminiClient {
   /// );
   ///
   /// // Text with files
-  /// final imageFile = await GeminiFile.fromFile(File('image.png'));
+  /// final imageFile = await GeminiFile.fromFile(PlatformFile('image.png'));
   /// final videoFile = await GeminiFile.fromFile(File('video.mp4'));
   /// final response = await client.createMultiModalPrompt(
   ///   text: 'Analyze these media files',
@@ -212,7 +212,7 @@ class GeminiClient {
   ///
   /// // Multiple file types
   /// final files = [
-  ///   await GeminiFile.fromFile(File('document.pdf')),
+  ///   await GeminiFile.fromFile(PlatformFile('document.pdf')),
   ///   await GeminiFile.fromFile(File('audio.mp3')),
   ///   await GeminiFile.fromFile(File('image.jpg')),
   /// ];
@@ -244,7 +244,7 @@ class GeminiClient {
   /// This method uploads large files (typically videos) to the Gemini API
   /// and returns a file URI that can be used in VideoContent objects.
   Future<FileUploadResponse> uploadFile({
-    required File file,
+    required PlatformFile file,
     String? mimeType,
   }) async {
     _ensureInitialized();

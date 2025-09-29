@@ -1,4 +1,4 @@
-import 'dart:io';
+import '../core/platform_imports.dart';
 import 'dart:typed_data';
 
 import 'file_types.dart';
@@ -28,7 +28,7 @@ class GeminiFile {
   ///
   /// Automatically detects the file type from the file extension.
   /// Throws an ArgumentError if the file type is not supported.
-  static Future<GeminiFile> fromFile(File file) async {
+  static Future<GeminiFile> fromFile(PlatformFile file) async {
     final bytes = await file.readAsBytes();
     final extension = file.path.split('.').last;
     final fileType = GeminiFileType.fromExtension(extension);
@@ -118,7 +118,7 @@ class GeminiFile {
 
   /// Save this file to disk
   Future<void> saveTo(String path) async {
-    final file = File(path);
+    final file = PlatformFile(path);
     await file.writeAsBytes(data);
   }
 

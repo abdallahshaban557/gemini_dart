@@ -8,7 +8,7 @@ import '../../../lib/src/core/retry_config.dart';
 void main() {
   group('RetryConfig', () {
     test('should create with default values', () {
-      const config = RetryConfig();
+      final config = RetryConfig();
 
       expect(config.maxAttempts, equals(3));
       expect(config.initialDelay, equals(const Duration(seconds: 1)));
@@ -30,7 +30,7 @@ void main() {
     });
 
     test('should create aggressive config', () {
-      const config = RetryConfig.aggressive();
+      final config = RetryConfig.aggressive();
 
       expect(config.maxAttempts, equals(5));
       expect(config.initialDelay, equals(const Duration(milliseconds: 500)));
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('should create conservative config', () {
-      const config = RetryConfig.conservative();
+      final config = RetryConfig.conservative();
 
       expect(config.maxAttempts, equals(2));
       expect(config.initialDelay, equals(const Duration(seconds: 2)));
@@ -49,14 +49,14 @@ void main() {
 
     group('calculateDelay', () {
       test('should return zero for attempt 0 or negative', () {
-        const config = RetryConfig();
+        final config = RetryConfig();
 
         expect(config.calculateDelay(0), equals(Duration.zero));
         expect(config.calculateDelay(-1), equals(Duration.zero));
       });
 
       test('should calculate exponential backoff correctly', () {
-        const config = RetryConfig(
+        final config = RetryConfig(
           initialDelay: Duration(seconds: 1),
           backoffMultiplier: 2.0,
         );
@@ -67,7 +67,7 @@ void main() {
       });
 
       test('should cap delay at maxDelay', () {
-        const config = RetryConfig(
+        final config = RetryConfig(
           initialDelay: Duration(seconds: 10),
           backoffMultiplier: 2.0,
           maxDelay: Duration(seconds: 15),
@@ -82,7 +82,7 @@ void main() {
     });
 
     group('shouldRetry', () {
-      const config = RetryConfig(maxAttempts: 3);
+      final config = RetryConfig(maxAttempts: 3);
 
       test('should not retry when max attempts reached', () {
         final exception = const SocketException('Connection failed');
@@ -146,7 +146,7 @@ void main() {
 
     group('getRateLimitDelay', () {
       test('should return exception retry-after duration when within max', () {
-        const config = RetryConfig(maxDelay: Duration(minutes: 2));
+        final config = RetryConfig(maxDelay: Duration(minutes: 2));
         const exception =
             GeminiRateLimitException('Rate limited', Duration(seconds: 30));
 
@@ -155,7 +155,7 @@ void main() {
       });
 
       test('should cap delay at maxDelay', () {
-        const config = RetryConfig(maxDelay: Duration(seconds: 30));
+        final config = RetryConfig(maxDelay: Duration(seconds: 30));
         const exception =
             GeminiRateLimitException('Rate limited', Duration(minutes: 2));
 
@@ -166,7 +166,7 @@ void main() {
 
     group('copyWith', () {
       test('should create copy with modified values', () {
-        const original = RetryConfig();
+        final original = RetryConfig();
         final copy = original.copyWith(
           maxAttempts: 5,
           initialDelay: const Duration(seconds: 2),
@@ -179,7 +179,7 @@ void main() {
       });
 
       test('should keep original values when not specified', () {
-        const original = RetryConfig(maxAttempts: 5);
+        final original = RetryConfig(maxAttempts: 5);
         final copy = original.copyWith();
 
         expect(copy.maxAttempts, equals(5));
@@ -189,32 +189,32 @@ void main() {
 
     group('validate', () {
       test('should pass validation for valid config', () {
-        const config = RetryConfig();
+        final config = RetryConfig();
         expect(() => config.validate(), returnsNormally);
       });
 
       test('should throw for maxAttempts less than 1', () {
-        const config = RetryConfig(maxAttempts: 0);
+        final config = RetryConfig(maxAttempts: 0);
         expect(() => config.validate(), throwsArgumentError);
       });
 
       test('should throw for negative initialDelay', () {
-        const config = RetryConfig(initialDelay: Duration(seconds: -1));
+        final config = RetryConfig(initialDelay: Duration(seconds: -1));
         expect(() => config.validate(), throwsArgumentError);
       });
 
       test('should throw for non-positive backoffMultiplier', () {
-        const config = RetryConfig(backoffMultiplier: 0);
+        final config = RetryConfig(backoffMultiplier: 0);
         expect(() => config.validate(), throwsArgumentError);
       });
 
       test('should throw for negative maxDelay', () {
-        const config = RetryConfig(maxDelay: Duration(seconds: -1));
+        final config = RetryConfig(maxDelay: Duration(seconds: -1));
         expect(() => config.validate(), throwsArgumentError);
       });
 
       test('should throw when maxDelay is less than initialDelay', () {
-        const config = RetryConfig(
+        final config = RetryConfig(
           initialDelay: Duration(seconds: 10),
           maxDelay: Duration(seconds: 5),
         );
@@ -224,23 +224,23 @@ void main() {
 
     group('equality and hashCode', () {
       test('should be equal for same values', () {
-        const config1 = RetryConfig(maxAttempts: 3);
-        const config2 = RetryConfig(maxAttempts: 3);
+        final config1 = RetryConfig(maxAttempts: 3);
+        final config2 = RetryConfig(maxAttempts: 3);
 
         expect(config1, equals(config2));
         expect(config1.hashCode, equals(config2.hashCode));
       });
 
       test('should not be equal for different values', () {
-        const config1 = RetryConfig(maxAttempts: 3);
-        const config2 = RetryConfig(maxAttempts: 5);
+        final config1 = RetryConfig(maxAttempts: 3);
+        final config2 = RetryConfig(maxAttempts: 5);
 
         expect(config1, isNot(equals(config2)));
       });
     });
 
     test('should have meaningful toString', () {
-      const config = RetryConfig();
+      final config = RetryConfig();
       final str = config.toString();
 
       expect(str, contains('RetryConfig'));
