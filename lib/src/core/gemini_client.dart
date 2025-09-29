@@ -125,7 +125,6 @@ class GeminiClient {
 
     return _textHandler!
         .generateText(prompt: prompt, config: config, context: context);
-        .generateText(prompt: prompt, config: config, context: context);
   }
 
   /// Generate streaming text from a text prompt
