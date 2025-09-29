@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
@@ -7,6 +8,7 @@ import 'package:gemini_dart/src/handlers/image_handler.dart';
 import 'package:gemini_dart/src/handlers/multimodal_handler.dart';
 import 'package:gemini_dart/src/models/content.dart';
 import 'package:gemini_dart/src/models/gemini_config.dart';
+import 'package:gemini_dart/src/models/gemini_file.dart';
 import 'package:gemini_dart/src/services/http_service.dart';
 
 void main() {
@@ -38,24 +40,30 @@ void main() {
       imageHandler = ImageHandler(httpService: httpService);
       multiModalHandler = MultiModalHandler(httpService: httpService);
 
-      // Create a simple test image (1x1 PNG)
-      testImageData = Uint8List.fromList([
-        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
-        0x00, 0x00, 0x00, 0x0D, // IHDR chunk length
-        0x49, 0x48, 0x44, 0x52, // IHDR
-        0x00, 0x00, 0x00, 0x01, // Width: 1
-        0x00, 0x00, 0x00, 0x01, // Height: 1
-        0x08, 0x02, 0x00, 0x00, 0x00, // Bit depth, color type, etc.
-        0x90, 0x77, 0x53, 0xDE, // CRC
-        0x00, 0x00, 0x00, 0x0C, // IDAT chunk length
-        0x49, 0x44, 0x41, 0x54, // IDAT
-        0x08, 0x99, 0x01, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00,
-        0x00, // Data
-        0x02, 0x00, 0x01, // CRC
-        0x00, 0x00, 0x00, 0x00, // IEND chunk length
-        0x49, 0x45, 0x4E, 0x44, // IEND
-        0xAE, 0x42, 0x60, 0x82, // CRC
-      ]);
+      // Load a real test image from the example directory
+      final imageFile = File('example/generated_images/cat.png');
+      if (await imageFile.exists()) {
+        testImageData = await imageFile.readAsBytes();
+      } else {
+        // Fallback: create a minimal valid PNG if the file doesn't exist
+        testImageData = Uint8List.fromList([
+          0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
+          0x00, 0x00, 0x00, 0x0D, // IHDR chunk length
+          0x49, 0x48, 0x44, 0x52, // IHDR
+          0x00, 0x00, 0x00, 0x01, // Width: 1
+          0x00, 0x00, 0x00, 0x01, // Height: 1
+          0x08, 0x02, 0x00, 0x00, 0x00, // Bit depth, color type, etc.
+          0x90, 0x77, 0x53, 0xDE, // CRC
+          0x00, 0x00, 0x00, 0x0C, // IDAT chunk length
+          0x49, 0x44, 0x41, 0x54, // IDAT
+          0x08, 0x99, 0x01, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00,
+          0x00, // Data
+          0x02, 0x00, 0x01, // CRC
+          0x00, 0x00, 0x00, 0x00, // IEND chunk length
+          0x49, 0x45, 0x4E, 0x44, // IEND
+          0xAE, 0x42, 0x60, 0x82, // CRC
+        ]);
+      }
     });
 
     group('ImageHandler Integration', () {
@@ -145,12 +153,13 @@ void main() {
         if (apiKey.isEmpty) return;
 
         final images = [
-          (data: testImageData, mimeType: 'image/png'),
+          GeminiFile.fromBytesWithMimeType(
+              bytes: testImageData, mimeType: 'image/png'),
         ];
 
         final response = await multiModalHandler.createPrompt(
           text: 'Analyze this image for any interesting features',
-          images: images,
+          files: images,
         );
 
         expect(response.text, isNotNull);
@@ -162,12 +171,13 @@ void main() {
         if (apiKey.isEmpty) return;
 
         final images = [
-          (data: testImageData, mimeType: 'image/png'),
+          GeminiFile.fromBytesWithMimeType(
+              bytes: testImageData, mimeType: 'image/png'),
         ];
 
         final response = await multiModalHandler.analyzeMedia(
           analysisPrompt: 'Perform a technical analysis of this image',
-          images: images,
+          files: images,
         );
 
         expect(response.text, isNotNull);
