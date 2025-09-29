@@ -10,10 +10,10 @@ import 'dart:typed_data' as _i12;
 import 'package:gemini_dart/src/core/auth.dart' as _i6;
 import 'package:gemini_dart/src/handlers/conversation_context.dart' as _i9;
 import 'package:gemini_dart/src/handlers/image_handler.dart' as _i11;
-import 'package:gemini_dart/src/handlers/multimodal_handler.dart' as _i13;
+import 'package:gemini_dart/src/handlers/multimodal_handler.dart' as _i14;
 import 'package:gemini_dart/src/handlers/text_handler.dart' as _i7;
 import 'package:gemini_dart/src/models/content.dart' as _i10;
-import 'package:gemini_dart/src/models/gemini_file.dart' as _i14;
+import 'package:gemini_dart/src/models/gemini_file.dart' as _i13;
 import 'package:gemini_dart/src/models/generation_config.dart' as _i8;
 import 'package:gemini_dart/src/models/response.dart' as _i2;
 import 'package:gemini_dart/src/services/http_service.dart' as _i3;
@@ -296,14 +296,14 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
   }
 
   @override
-  _i4.Future<_i2.GeminiResponse> generateContent({
+  _i4.Future<_i2.GeminiResponse> generateText({
     required String? prompt,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #generateContent,
+          #generateText,
           [],
           {
             #prompt: prompt,
@@ -314,7 +314,7 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
         returnValue: _i4.Future<_i2.GeminiResponse>.value(_FakeGeminiResponse_0(
           this,
           Invocation.method(
-            #generateContent,
+            #generateText,
             [],
             {
               #prompt: prompt,
@@ -356,14 +356,14 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
       ) as _i4.Future<_i2.GeminiResponse>);
 
   @override
-  _i4.Stream<_i2.GeminiResponse> generateContentStream({
+  _i4.Stream<_i2.GeminiResponse> generateTextStream({
     required String? prompt,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
-          #generateContentStream,
+          #generateTextStream,
           [],
           {
             #prompt: prompt,
@@ -440,6 +440,65 @@ class MockTextHandler extends _i1.Mock implements _i7.TextHandler {
         ),
         returnValue: _i4.Stream<_i2.GeminiResponse>.empty(),
       ) as _i4.Stream<_i2.GeminiResponse>);
+
+  @override
+  _i4.Future<_i2.GeminiResponse> generateContent({
+    required List<_i10.Content>? contents,
+    _i8.GenerationConfig? config,
+    _i9.ConversationContext? context,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateContent,
+          [],
+          {
+            #contents: contents,
+            #config: config,
+            #context: context,
+          },
+        ),
+        returnValue: _i4.Future<_i2.GeminiResponse>.value(_FakeGeminiResponse_0(
+          this,
+          Invocation.method(
+            #generateContent,
+            [],
+            {
+              #contents: contents,
+              #config: config,
+              #context: context,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i2.GeminiResponse>);
+
+  @override
+  _i4.Stream<_i2.GeminiResponse> generateContentStream({
+    required List<_i10.Content>? contents,
+    _i8.GenerationConfig? config,
+    _i9.ConversationContext? context,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateContentStream,
+          [],
+          {
+            #contents: contents,
+            #config: config,
+            #context: context,
+          },
+        ),
+        returnValue: _i4.Stream<_i2.GeminiResponse>.empty(),
+      ) as _i4.Stream<_i2.GeminiResponse>);
+
+  @override
+  Map<String, dynamic> getContentStatistics(List<_i10.Content>? contents) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getContentStatistics,
+          [contents],
+        ),
+        returnValue: <String, dynamic>{},
+      ) as Map<String, dynamic>);
 }
 
 /// A class which mocks [ImageHandler].
@@ -678,12 +737,107 @@ class MockImageHandler extends _i1.Mock implements _i11.ImageHandler {
           ),
         )),
       ) as _i4.Future<_i2.GeminiResponse>);
+
+  @override
+  _i4.Future<_i2.GeminiResponse> generateImage({
+    required String? prompt,
+    List<_i13.GeminiFile>? geminiFiles,
+    List<({_i12.Uint8List data, String mimeType})>? files,
+    _i8.GenerationConfig? config,
+    _i9.ConversationContext? context,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateImage,
+          [],
+          {
+            #prompt: prompt,
+            #geminiFiles: geminiFiles,
+            #files: files,
+            #config: config,
+            #context: context,
+          },
+        ),
+        returnValue: _i4.Future<_i2.GeminiResponse>.value(_FakeGeminiResponse_0(
+          this,
+          Invocation.method(
+            #generateImage,
+            [],
+            {
+              #prompt: prompt,
+              #geminiFiles: geminiFiles,
+              #files: files,
+              #config: config,
+              #context: context,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i2.GeminiResponse>);
+
+  @override
+  _i4.Future<_i2.GeminiResponse> generateContent({
+    required List<_i10.Content>? contents,
+    _i8.GenerationConfig? config,
+    _i9.ConversationContext? context,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateContent,
+          [],
+          {
+            #contents: contents,
+            #config: config,
+            #context: context,
+          },
+        ),
+        returnValue: _i4.Future<_i2.GeminiResponse>.value(_FakeGeminiResponse_0(
+          this,
+          Invocation.method(
+            #generateContent,
+            [],
+            {
+              #contents: contents,
+              #config: config,
+              #context: context,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i2.GeminiResponse>);
+
+  @override
+  _i4.Stream<_i2.GeminiResponse> generateContentStream({
+    required List<_i10.Content>? contents,
+    _i8.GenerationConfig? config,
+    _i9.ConversationContext? context,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #generateContentStream,
+          [],
+          {
+            #contents: contents,
+            #config: config,
+            #context: context,
+          },
+        ),
+        returnValue: _i4.Stream<_i2.GeminiResponse>.empty(),
+      ) as _i4.Stream<_i2.GeminiResponse>);
+
+  @override
+  Map<String, dynamic> getContentStatistics(List<_i10.Content>? contents) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getContentStatistics,
+          [contents],
+        ),
+        returnValue: <String, dynamic>{},
+      ) as Map<String, dynamic>);
 }
 
 /// A class which mocks [MultiModalHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
+class MockMultiModalHandler extends _i1.Mock implements _i14.MultiModalHandler {
   MockMultiModalHandler() {
     _i1.throwOnMissingStub(this);
   }
@@ -740,7 +894,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
   @override
   _i4.Future<_i2.GeminiResponse> createPrompt({
     String? text,
-    List<_i14.GeminiFile>? files,
+    List<_i13.GeminiFile>? files,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
@@ -773,7 +927,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
   @override
   _i4.Future<_i2.GeminiResponse> analyzeMedia({
     required String? analysisPrompt,
-    required List<_i14.GeminiFile>? files,
+    required List<_i13.GeminiFile>? files,
     _i8.GenerationConfig? config,
     _i9.ConversationContext? context,
   }) =>
@@ -807,7 +961,7 @@ class MockMultiModalHandler extends _i1.Mock implements _i13.MultiModalHandler {
   _i4.Future<_i2.GeminiResponse> conversationWithMedia(
     _i9.ConversationContext? context, {
     String? text,
-    List<_i14.GeminiFile>? files,
+    List<_i13.GeminiFile>? files,
     _i8.GenerationConfig? config,
   }) =>
       (super.noSuchMethod(

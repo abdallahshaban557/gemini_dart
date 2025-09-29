@@ -48,7 +48,7 @@ void main() {
         )).thenAnswer((_) async => expectedResponse);
 
         // Act
-        final result = await textHandler.generateContent(prompt: prompt);
+        final result = await textHandler.generateText(prompt: prompt);
 
         // Assert
         expect(result.text, equals('Hello! How can I help you today?'));
@@ -66,11 +66,11 @@ void main() {
       test('should throw validation exception for empty prompt', () async {
         // Act & Assert
         expect(
-          () => textHandler.generateContent(prompt: ''),
+          () => textHandler.generateText(prompt: ''),
           throwsA(isA<GeminiValidationException>()),
         );
         expect(
-          () => textHandler.generateContent(prompt: '   '),
+          () => textHandler.generateText(prompt: '   '),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -98,7 +98,7 @@ void main() {
         )).thenAnswer((_) async => expectedResponse);
 
         // Act
-        await textHandler.generateContent(prompt: prompt, config: config);
+        await textHandler.generateText(prompt: prompt, config: config);
 
         // Assert
         verify(mockHttpService.post(
@@ -149,7 +149,7 @@ void main() {
         )).thenAnswer((_) async => expectedResponse);
 
         // Act
-        final result = await textHandler.generateContent(
+        final result = await textHandler.generateText(
           prompt: prompt,
           context: context,
         );
@@ -255,7 +255,7 @@ void main() {
         // Act
         final results = <GeminiResponse>[];
         await for (final response
-            in textHandler.generateContentStream(prompt: prompt)) {
+            in textHandler.generateTextStream(prompt: prompt)) {
           results.add(response);
         }
 
@@ -268,7 +268,7 @@ void main() {
       test('should throw validation exception for empty prompt', () async {
         // Act & Assert
         expect(
-          () => textHandler.generateContentStream(prompt: '').toList(),
+          () => textHandler.generateTextStream(prompt: '').toList(),
           throwsA(isA<GeminiValidationException>()),
         );
       });
@@ -299,7 +299,7 @@ void main() {
 
         // Act
         final results = <GeminiResponse>[];
-        await for (final response in textHandler.generateContentStream(
+        await for (final response in textHandler.generateTextStream(
           prompt: prompt,
           context: context,
         )) {
