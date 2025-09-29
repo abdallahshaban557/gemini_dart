@@ -116,18 +116,18 @@ void main() {
       test('should handle conversation context', () async {
         // Arrange
         const prompt = 'Continue the conversation';
-        final context = ConversationContext();
-        context.addUserMessage('Hello');
-        context.addModelResponse(GeminiResponse(
-          text: 'Hi there!',
-          candidates: [
-            Candidate(
-              content: TextContent('Hi there!'),
-              index: 0,
-              safetyRatings: [],
-            )
-          ],
-        ));
+        final context = ConversationContext()
+          ..addUserMessage('Hello')
+          ..addModelResponse(GeminiResponse(
+            text: 'Hi there!',
+            candidates: [
+              Candidate(
+                content: TextContent('Hi there!'),
+                index: 0,
+                safetyRatings: [],
+              )
+            ],
+          ));
 
         final expectedResponse = {
           'candidates': [
@@ -419,8 +419,8 @@ void main() {
       });
 
       test('should build request body with context', () async {
-        final context = ConversationContext();
-        context.addUserMessage('Previous message');
+        final context = ConversationContext()
+          ..addUserMessage('Previous message');
 
         final contents = [TextContent('Current message')];
         final expectedResponse = {
