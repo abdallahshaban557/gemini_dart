@@ -74,6 +74,7 @@ class GeminiClient {
     final modelName = _selectedModel?.name ?? 'gemini-2.5-flash';
     _textHandler = TextHandler(httpService: _httpService!, model: modelName);
     _imageHandler = ImageHandler(httpService: _httpService!, model: modelName);
+    _imageHandler = ImageHandler(httpService: _httpService!, model: modelName);
     _multiModalHandler = MultiModalHandler(httpService: _httpService!);
   }
 
@@ -124,6 +125,7 @@ class GeminiClient {
 
     return _textHandler!
         .generateText(prompt: prompt, config: config, context: context);
+        .generateText(prompt: prompt, config: config, context: context);
   }
 
   /// Generate streaming text from a text prompt
@@ -136,6 +138,7 @@ class GeminiClient {
     _ensureInitialized();
     _validateModelCapability(
         ModelCapability.textGeneration, 'generateTextStream');
+    yield* _textHandler!.generateTextStream(prompt: prompt, config: config);
     yield* _textHandler!.generateTextStream(prompt: prompt, config: config);
   }
 
@@ -180,6 +183,15 @@ class GeminiClient {
     ConversationContext? context,
   }) async {
     _ensureInitialized();
+    _validateModelCapability(ModelCapability.imageGeneration, 'generateImage');
+
+    return _imageHandler!.generateImage(
+      prompt: prompt,
+      geminiFiles: geminiFiles,
+      files: files,
+      config: config,
+      context: context,
+    );
     _validateModelCapability(ModelCapability.imageGeneration, 'generateImage');
 
     return _imageHandler!.generateImage(
