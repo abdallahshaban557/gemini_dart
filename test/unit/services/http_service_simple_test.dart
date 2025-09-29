@@ -214,7 +214,7 @@ void main() {
       retryService = HttpService(
         auth: auth,
         config: config,
-        retryConfig: const RetryConfig(
+        retryConfig: RetryConfig(
           maxAttempts: 3,
           initialDelay: Duration(milliseconds: 10),
         ),
@@ -261,7 +261,7 @@ void main() {
       final debugRetryService = HttpService(
         auth: auth,
         config: debugConfig,
-        retryConfig: const RetryConfig(
+        retryConfig: RetryConfig(
           maxAttempts: 3,
           initialDelay: Duration(milliseconds: 10),
         ),

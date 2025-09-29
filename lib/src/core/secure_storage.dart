@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'platform_imports.dart';
 import 'package:path/path.dart' as path;
 
 /// Secure storage interface for storing sensitive data like API keys
@@ -18,7 +18,7 @@ class SecureStorage implements SecureStorageInterface {
       _storagePath = customPath;
     } else {
       // Use system temp directory for basic storage
-      final tempDir = Directory.systemTemp;
+      final tempDir = PlatformDirectory.systemTemp;
       _storagePath = path.join(tempDir.path, _storageFileName);
     }
   }
@@ -32,7 +32,7 @@ class SecureStorage implements SecureStorageInterface {
       return _cache!;
     }
 
-    final file = File(_storagePath);
+    final file = PlatformFile(_storagePath);
     if (!await file.exists()) {
       _cache = <String, String>{};
       return _cache!;
@@ -61,7 +61,7 @@ class SecureStorage implements SecureStorageInterface {
   Future<void> _saveCache() async {
     if (_cache == null) return;
 
-    final file = File(_storagePath);
+    final file = PlatformFile(_storagePath);
     await file.parent.create(recursive: true);
 
     // Simple base64 encoding for basic obfuscation

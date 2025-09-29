@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import '../core/platform_imports.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as http_parser;
@@ -20,7 +20,7 @@ class HttpService {
     http.Client? client,
   })  : _auth = auth,
         _config = config,
-        _retryConfig = retryConfig ?? const RetryConfig(),
+        _retryConfig = retryConfig ?? RetryConfig(),
         _client = client ?? http.Client() {
     _config.validate();
     _retryConfig.validate();
@@ -278,7 +278,7 @@ class HttpService {
   /// Uploads a file using multipart form data
   Future<Map<String, dynamic>> uploadFile(
     String endpoint,
-    File file, {
+    PlatformFile file, {
     String? fieldName,
     String? mimeType,
     Map<String, String>? additionalFields,

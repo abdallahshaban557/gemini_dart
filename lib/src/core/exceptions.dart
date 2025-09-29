@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'platform_imports.dart';
 
 /// Base exception class for all Gemini-related errors
 abstract class GeminiException implements Exception {
@@ -140,7 +140,7 @@ class GeminiServerException extends GeminiException {
 class ExceptionMapper {
   /// Maps HTTP exceptions to appropriate Gemini exceptions
   static GeminiException mapHttpException(dynamic error, {int? statusCode}) {
-    if (error is SocketException) {
+    if (error is PlatformSocketException) {
       return GeminiNetworkException(
         'Network connection failed: ${error.message}',
         statusCode: statusCode,
@@ -148,7 +148,7 @@ class ExceptionMapper {
       );
     }
 
-    if (error is HttpException) {
+    if (error is PlatformHttpException) {
       return GeminiNetworkException(
         'HTTP error: ${error.message}',
         statusCode: statusCode,

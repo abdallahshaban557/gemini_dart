@@ -1,16 +1,15 @@
 import 'dart:async';
 
-import 'package:test/test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
-
-import 'package:gemini_dart/src/handlers/text_handler.dart';
+import 'package:gemini_dart/src/core/exceptions.dart';
 import 'package:gemini_dart/src/handlers/conversation_context.dart';
+import 'package:gemini_dart/src/handlers/text_handler.dart';
 import 'package:gemini_dart/src/models/content.dart';
 import 'package:gemini_dart/src/models/generation_config.dart';
 import 'package:gemini_dart/src/models/response.dart';
 import 'package:gemini_dart/src/services/http_service.dart';
-import 'package:gemini_dart/src/core/exceptions.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:test/test.dart';
 
 import 'text_handler_test.mocks.dart';
 
@@ -43,7 +42,7 @@ void main() {
         };
 
         when(mockHttpService.post(
-          'models/gemini-2.5-flash:generateContent',
+          'models/gemini-2.5-pro:generateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
@@ -54,7 +53,7 @@ void main() {
         expect(result.text, equals('Hello! How can I help you today?'));
         expect(result.candidates, hasLength(1));
         verify(mockHttpService.post(
-          'models/gemini-2.5-flash:generateContent',
+          'models/gemini-2.5-pro:generateContent',
           body: argThat(
             isA<Map<String, dynamic>>()
                 .having((m) => m['contents'], 'contents', isA<List>()),
@@ -93,7 +92,7 @@ void main() {
         };
 
         when(mockHttpService.post(
-          any,
+          'models/gemini-2.5-pro:generateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
@@ -102,7 +101,7 @@ void main() {
 
         // Assert
         verify(mockHttpService.post(
-          'models/gemini-2.5-flash:generateContent',
+          'models/gemini-2.5-pro:generateContent',
           body: argThat(
             isA<Map<String, dynamic>>().having(
               (m) => m['generationConfig'],
@@ -117,18 +116,18 @@ void main() {
       test('should handle conversation context', () async {
         // Arrange
         const prompt = 'Continue the conversation';
-        final context = ConversationContext();
-        context.addUserMessage('Hello');
-        context.addModelResponse(GeminiResponse(
-          text: 'Hi there!',
-          candidates: [
-            Candidate(
-              content: TextContent('Hi there!'),
-              index: 0,
-              safetyRatings: [],
-            )
-          ],
-        ));
+        final context = ConversationContext()
+          ..addUserMessage('Hello')
+          ..addModelResponse(GeminiResponse(
+            text: 'Hi there!',
+            candidates: [
+              Candidate(
+                content: TextContent('Hi there!'),
+                index: 0,
+                safetyRatings: [],
+              )
+            ],
+          ));
 
         final expectedResponse = {
           'candidates': [
@@ -144,7 +143,7 @@ void main() {
         };
 
         when(mockHttpService.post(
-          any,
+          'models/gemini-2.5-pro:generateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
@@ -178,7 +177,7 @@ void main() {
         };
 
         when(mockHttpService.post(
-          any,
+          'models/gemini-2.5-pro:generateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
@@ -189,7 +188,7 @@ void main() {
         // Assert
         expect(result.text, equals('Generated response'));
         verify(mockHttpService.post(
-          'models/gemini-2.5-flash:generateContent',
+          'models/gemini-2.5-pro:generateContent',
           body: anyNamed('body'),
         )).called(1);
       });
@@ -248,7 +247,7 @@ void main() {
         ];
 
         when(mockHttpService.postStream(
-          'models/gemini-2.5-flash:streamGenerateContent',
+          'models/gemini-2.5-pro:streamGenerateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) => Stream.fromIterable(streamData));
 
@@ -293,7 +292,7 @@ void main() {
         ];
 
         when(mockHttpService.postStream(
-          any,
+          'models/gemini-2.5-pro:streamGenerateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) => Stream.fromIterable(streamData));
 
@@ -331,12 +330,13 @@ void main() {
         };
 
         when(mockHttpService.post(
-          any,
+          'models/gemini-2.5-pro:generateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
         // Act
-        final result = await textHandler.generateWithContext(context: context, prompt: prompt);
+        final result = await textHandler.generateWithContext(
+            context: context, prompt: prompt);
 
         // Assert
         expect(result.text, equals('Context response'));
@@ -365,7 +365,7 @@ void main() {
         ];
 
         when(mockHttpService.postStream(
-          any,
+          'models/gemini-2.5-pro:streamGenerateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) => Stream.fromIterable(streamData));
 
@@ -403,14 +403,14 @@ void main() {
         };
 
         when(mockHttpService.post(
-          any,
+          'models/gemini-2.5-pro:generateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
         await textHandler.generateFromContent(contents: contents);
 
         final captured = verify(mockHttpService.post(
-          any,
+          'models/gemini-2.5-pro:generateContent',
           body: captureAnyNamed('body'),
         )).captured.single as Map<String, dynamic>;
 
@@ -419,8 +419,8 @@ void main() {
       });
 
       test('should build request body with context', () async {
-        final context = ConversationContext();
-        context.addUserMessage('Previous message');
+        final context = ConversationContext()
+          ..addUserMessage('Previous message');
 
         final contents = [TextContent('Current message')];
         final expectedResponse = {
@@ -437,7 +437,7 @@ void main() {
         };
 
         when(mockHttpService.post(
-          any,
+          'models/gemini-2.5-pro:generateContent',
           body: anyNamed('body'),
         )).thenAnswer((_) async => expectedResponse);
 
@@ -445,7 +445,7 @@ void main() {
             contents: contents, context: context);
 
         final captured = verify(mockHttpService.post(
-          any,
+          'models/gemini-2.5-pro:generateContent',
           body: captureAnyNamed('body'),
         )).captured.single as Map<String, dynamic>;
 

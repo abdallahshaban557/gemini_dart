@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'platform_imports.dart';
 import 'dart:typed_data';
 
 import '../handlers/conversation_context.dart';
@@ -74,6 +74,7 @@ class GeminiClient {
     final modelName = _selectedModel?.name ?? 'gemini-2.5-flash';
     _textHandler = TextHandler(httpService: _httpService!, model: modelName);
     _imageHandler = ImageHandler(httpService: _httpService!, model: modelName);
+    _imageHandler = ImageHandler(httpService: _httpService!, model: modelName);
     _multiModalHandler = MultiModalHandler(httpService: _httpService!);
   }
 
@@ -137,6 +138,7 @@ class GeminiClient {
     _validateModelCapability(
         ModelCapability.textGeneration, 'generateTextStream');
     yield* _textHandler!.generateTextStream(prompt: prompt, config: config);
+    yield* _textHandler!.generateTextStream(prompt: prompt, config: config);
   }
 
   /// Generate an image from a text prompt with optional input files
@@ -150,7 +152,7 @@ class GeminiClient {
   /// final response = await client.generateImage(prompt: 'A sunset over mountains');
   ///
   /// // Using GeminiFile objects (recommended)
-  /// final imageFile = await GeminiFile.fromFile(File('image.png'));
+  /// final imageFile = await GeminiFile.fromFile(PlatformFile('image.png'));
   /// final response = await client.generateImage(
   ///   prompt: 'Make this image more colorful',
   ///   geminiFiles: [imageFile], // Direct usage - no toApiFormat needed!
@@ -158,7 +160,7 @@ class GeminiClient {
   ///
   /// // Multiple file types
   /// final files = [
-  ///   await GeminiFile.fromFile(File('document.pdf')),
+  ///   await GeminiFile.fromFile(PlatformFile('document.pdf')),
   ///   await GeminiFile.fromFile(File('audio.mp3')),
   /// ];
   /// final response = await client.generateImage(
@@ -189,6 +191,15 @@ class GeminiClient {
       config: config,
       context: context,
     );
+    _validateModelCapability(ModelCapability.imageGeneration, 'generateImage');
+
+    return _imageHandler!.generateImage(
+      prompt: prompt,
+      geminiFiles: geminiFiles,
+      files: files,
+      config: config,
+      context: context,
+    );
   }
 
   /// Create a multi-modal prompt with text and files
@@ -203,7 +214,7 @@ class GeminiClient {
   /// );
   ///
   /// // Text with files
-  /// final imageFile = await GeminiFile.fromFile(File('image.png'));
+  /// final imageFile = await GeminiFile.fromFile(PlatformFile('image.png'));
   /// final videoFile = await GeminiFile.fromFile(File('video.mp4'));
   /// final response = await client.createMultiModalPrompt(
   ///   text: 'Analyze these media files',
@@ -212,7 +223,7 @@ class GeminiClient {
   ///
   /// // Multiple file types
   /// final files = [
-  ///   await GeminiFile.fromFile(File('document.pdf')),
+  ///   await GeminiFile.fromFile(PlatformFile('document.pdf')),
   ///   await GeminiFile.fromFile(File('audio.mp3')),
   ///   await GeminiFile.fromFile(File('image.jpg')),
   /// ];
@@ -244,7 +255,7 @@ class GeminiClient {
   /// This method uploads large files (typically videos) to the Gemini API
   /// and returns a file URI that can be used in VideoContent objects.
   Future<FileUploadResponse> uploadFile({
-    required File file,
+    required PlatformFile file,
     String? mimeType,
   }) async {
     _ensureInitialized();

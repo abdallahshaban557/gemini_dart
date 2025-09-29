@@ -66,7 +66,7 @@ void main() {
         // Assert
         expect(result.text, equals('Multi-modal analysis complete.'));
         verify(mockHttpService.post(
-          'models/gemini-2.5-flash:generateContent',
+          'models/gemini-2.5-pro:generateContent',
           body: anyNamed('body'),
         )).called(1);
       });
