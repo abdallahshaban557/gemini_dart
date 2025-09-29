@@ -1,16 +1,15 @@
 import 'dart:async';
 
-import 'package:test/test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
-
-import 'package:gemini_dart/src/handlers/text_handler.dart';
+import 'package:gemini_dart/src/core/exceptions.dart';
 import 'package:gemini_dart/src/handlers/conversation_context.dart';
+import 'package:gemini_dart/src/handlers/text_handler.dart';
 import 'package:gemini_dart/src/models/content.dart';
 import 'package:gemini_dart/src/models/generation_config.dart';
 import 'package:gemini_dart/src/models/response.dart';
 import 'package:gemini_dart/src/services/http_service.dart';
-import 'package:gemini_dart/src/core/exceptions.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:test/test.dart';
 
 import 'text_handler_test.mocks.dart';
 
