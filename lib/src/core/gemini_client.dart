@@ -123,7 +123,7 @@ class GeminiClient {
     _validateModelCapability(ModelCapability.textGeneration, 'generateText');
 
     return _textHandler!
-        .generateContent(prompt: prompt, config: config, context: context);
+        .generateText(prompt: prompt, config: config, context: context);
   }
 
   /// Generate streaming text from a text prompt
@@ -136,7 +136,7 @@ class GeminiClient {
     _ensureInitialized();
     _validateModelCapability(
         ModelCapability.textGeneration, 'generateTextStream');
-    yield* _textHandler!.generateContentStream(prompt: prompt, config: config);
+    yield* _textHandler!.generateTextStream(prompt: prompt, config: config);
   }
 
   /// Generate an image from a text prompt with optional input files
